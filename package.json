@@ -1,0 +1,18 @@
+{
+  "author": "Yamagishi Kazutoshi",
+  "name": "xmlhttprequest",
+  "description": "Server-side XMLHttpRequest.",
+  "version": "1.0.0",
+  "homepage": "https://github.com/ykzts/node-xmlhttprequest",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ykzts/node-xmlhttprequest.git"
+  },
+  "main": "./",
+  "dependencies": {},
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
