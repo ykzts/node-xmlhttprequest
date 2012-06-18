@@ -4,7 +4,9 @@ Server-side XMLHttpRequest like [W3C spec](http://www.w3.org/TR/XMLHttpRequest/)
 
 ## Example
 
-    var XMLHttpRequest = require('./');
+### Simple GET request
+
+    var XMLHttpRequest = require('./lib/xmlhttprequest');
     
     var client = new XMLHttpRequest();
     client.open('GET', 'http://example.com/');
@@ -12,3 +14,19 @@ Server-side XMLHttpRequest like [W3C spec](http://www.w3.org/TR/XMLHttpRequest/)
       console.log('HTTP Request OSHIMAI.');
     }, false);
     clietn.send();
+
+### Parse JSON response
+
+    var XMLHttpRequest = require('./lib/xmlhttprequest');
+    
+    var client = new XMLHttpRequest();
+    client.open('GET', 'http://exmaple.com/data.json');
+    client.responseType = 'json';
+    client.addEventListener('load', function() {
+      var data = client.response;
+      if (data.meta.status !== 200) {
+        return;
+      }
+      console.log(data.response.blog.title);
+    }, false);
+    client.send();
