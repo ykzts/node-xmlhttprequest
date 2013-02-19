@@ -2,6 +2,8 @@
 
 Server-side XMLHttpRequest like [W3C spec](http://www.w3.org/TR/XMLHttpRequest/) for [Node](http://nodejs.org/).
 
+This library is development unfinished. Recruitment to contributor and pull request.
+
 ## Install
 
     $ npm install w3c-xmlhttprequest
@@ -38,3 +40,7 @@ or
       console.log(data.response.blog.title);
     }, false);
     client.send();
+
+## LICENSE
+
+[MIT License](LICENSE)
