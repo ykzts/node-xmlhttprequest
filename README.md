@@ -1,6 +1,6 @@
 # node-xmlhttprequest
 
-Server-side XMLHttpRequest like [W3C spec](http://www.w3.org/TR/XMLHttpRequest/) for [Node](http://nodejs.org/).
+Server-side XMLHttpRequest like [W3C spec](http://www.w3.org/TR/2012/WD-XMLHttpRequest-20121206/) for [Node](http://nodejs.org/).
 
 This library is still in development. We are recruiting contributors and your pull requests.
 
