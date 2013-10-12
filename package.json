@@ -9,8 +9,13 @@
     "url": "git://github.com/ykzts/node-xmlhttprequest.git"
   },
   "main": "./",
+  "scripts": {
+    "test": "test -d node_modules || npm install && node_modules/.bin/mocha"
+  },
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "~1.13.0"
+  },
   "optionalDependencies": {},
   "engines": {
     "node": "*"
