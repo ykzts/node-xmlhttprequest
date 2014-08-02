@@ -14,9 +14,12 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "mocha": "~1.13.0"
+    "mocha": "~1.13.0",
+    "http-sync": "^0.0.5"
   },
-  "optionalDependencies": {},
+  "optionalDependencies": {
+    "http-sync": "^0.0.5"
+  },
   "engines": {
     "node": "*"
   }

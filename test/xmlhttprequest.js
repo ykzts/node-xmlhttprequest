@@ -25,45 +25,24 @@
   var assert = require('assert');
   var http = require('http');
   var url = require('url');
+  var cpm = require('child_process');
   var XMLHttpRequest = require('../lib/xmlhttprequest');
-
-  function parseQueryString(uri) {
-    var urlObj = url.parse(uri, true);
-    return urlObj.query;
-  }
-
-  function receiveRequest(req, res) {
-    var query = parseQueryString(req.url);
-    var body = query.body || '';
-    res.writeHead(+(query.status || 200), {
-      'Content-Type': 'text/plain'
-    });
-    res.write(body);
-    res.end();
-  }
+  var path = require('path');
 
   suite('XMLHttpRequest', function() {
     before(function(done) {
-      var server = this.server = http.createServer();
-      var port = 10000;
-      server.on('request', receiveRequest);
-      (function retry(port) {
-        try {
-          server.listen(port, function() {
-            this.baseUri = 'http://127.0.0.1:' + port;
-            done();
-          }.bind(this));
-        } catch (e) {
-          retry(port + 1);        
-        }
-      }).call(this, port);
+      var server = this.server = cpm.fork(path.join(__dirname, '..', 'test-server.js'));
+      server.on('message', function(obj) {
+        this.baseUri = obj.baseUri;
+        done();
+      }.bind(this));
     });
 
     after(function(done) {
-      var server = this.server;
-      server.close(function() {
+      this.server.on('close', function(code, signal) {
         done();
       });
+      this.server.kill('SIGKILL');
     });
 
     test('send GET request', function(done) {
@@ -114,6 +93,16 @@
         done();
       }, false);
       client.send(null);
+    });
+
+    test('send synchronous GET request', function(done) {
+      var uri = this.baseUri + '/?body=send%20request';
+      var client = new XMLHttpRequest();
+      client.open('GET', uri, false);
+      client.send(null);
+      assert.strictEqual(200, client.status);
+      assert.strictEqual('send request', client.responseText);
+      done();
     });
   });
 })();
