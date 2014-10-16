@@ -2,7 +2,7 @@
   "author": "Yamagishi Kazutoshi",
   "name": "w3c-xmlhttprequest",
   "description": "Server-side XMLHttpRequest.",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "homepage": "https://github.com/ykzts/node-xmlhttprequest",
   "repository": {
     "type": "git",
