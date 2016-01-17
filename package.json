@@ -2,22 +2,25 @@
   "author": "Yamagishi Kazutoshi",
   "name": "w3c-xmlhttprequest",
   "description": "Server-side XMLHttpRequest.",
-  "version": "1.2.2",
+  "version": "2.0.0",
+  "license": "MIT",
   "homepage": "https://github.com/ykzts/node-xmlhttprequest",
   "repository": {
     "type": "git",
     "url": "git://github.com/ykzts/node-xmlhttprequest.git"
   },
-  "main": "./",
+  "main": "./lib",
   "scripts": {
-    "test": "test -d node_modules || npm install && node_modules/.bin/mocha"
+    "lint": "npm install && eslint lib/**/*.js test/**/*.js",
+    "test": "npm install && mocha test/**/*.js"
   },
   "dependencies": {},
   "devDependencies": {
+    "eslint": "^1.10.3",
     "mocha": "~1.13.0"
   },
   "optionalDependencies": {},
   "engines": {
-    "node": "*"
+    "node": ">= 4.0.0"
   }
 }
