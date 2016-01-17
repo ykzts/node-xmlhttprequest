@@ -11,10 +11,12 @@
   },
   "main": "./lib",
   "scripts": {
+    "lint": "npm install && eslint lib/**/*.js test/**/*.js",
     "test": "npm install && mocha test/**/*.js"
   },
   "dependencies": {},
   "devDependencies": {
+    "eslint": "^1.10.3",
     "mocha": "~1.13.0"
   },
   "optionalDependencies": {},
