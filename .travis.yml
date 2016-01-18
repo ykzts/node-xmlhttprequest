@@ -6,3 +6,5 @@ cache:
 node_js:
   - 5
   - 4
+
+script: npm run lint && npm test
