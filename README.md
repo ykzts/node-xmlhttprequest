@@ -1,4 +1,4 @@
-# node-xmlhttprequest
+# node-xmlhttprequest [![Build Status](https://travis-ci.org/ykzts/node-xmlhttprequest.svg?branch=master)](https://travis-ci.org/ykzts/node-xmlhttprequest)
 
 Server-side XMLHttpRequest like [W3C spec](http://www.w3.org/TR/2012/WD-XMLHttpRequest-20121206/) for [Node](http://nodejs.org/).
 
