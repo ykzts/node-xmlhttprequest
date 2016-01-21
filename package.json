@@ -9,10 +9,13 @@
     "type": "git",
     "url": "git://github.com/ykzts/node-xmlhttprequest.git"
   },
-  "main": "./lib",
+  "main": "./lib/index.js",
   "scripts": {
     "lint": "npm install && eslint lib/**/*.js test/**/*.js",
     "test": "npm install && mocha test/**/*.js"
+  },
+  "browser": {
+    "./lib/index.js": "./lib/browser.js"
   },
   "dependencies": {},
   "devDependencies": {
