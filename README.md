@@ -1,6 +1,6 @@
 # w3c-xmlhttprequest [![Build Status](https://travis-ci.org/ykzts/node-xmlhttprequest.svg?branch=master)](https://travis-ci.org/ykzts/node-xmlhttprequest)
 
-Server-side XMLHttpRequest like [W3C spec](https://www.w3.org/TR/2012/WD-XMLHttpRequest-20121206/) for [Node](https://nodejs.org/).
+Server-side XMLHttpRequest like [W3C spec](https://www.w3.org/TR/2014/WD-XMLHttpRequest-20140130/) for [Node](https://nodejs.org/).
 
 This library is still in development. We are recruiting contributors and your pull requests.
 
