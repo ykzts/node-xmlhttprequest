@@ -6,8 +6,8 @@ We only fix vulnerabilities in the latest version.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 2.1.x   | :white_check_mark: |
-| < 2.0   | :x:                |
+| 2.2.x   | :white_check_mark: |
+| < 2.1   | :x:                |
 
 ## Reporting a Vulnerability
 
