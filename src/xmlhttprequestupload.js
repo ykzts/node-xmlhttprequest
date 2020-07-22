@@ -24,5 +24,4 @@
 
 import XMLHttpRequestEventTarget from './xmlhttprequesteventtarget';
 
-export default class XMLHttpRequestUpload extends XMLHttpRequestEventTarget {
-}
+export default class XMLHttpRequestUpload extends XMLHttpRequestEventTarget {}

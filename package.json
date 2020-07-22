@@ -5,11 +5,38 @@
   "description": "Server-side XMLHttpRequest.",
   "devDependencies": {
     "eslint": "^7.5.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
     "microbundle": "^0.12.3",
-    "mocha": "^8.0.1"
+    "mocha": "^8.0.1",
+    "prettier": "^2.0.5"
   },
   "engines": {
     "node": ">= 10.13.0"
+  },
+  "eslintConfig": {
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:prettier/recommended"
+    ],
+    "overrides": [
+      {
+        "env": {
+          "mocha": true
+        },
+        "files": [
+          "test/**/*.js"
+        ]
+      }
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2019,
+      "sourceType": "module"
+    }
   },
   "files": [
     "dist",
@@ -21,12 +48,23 @@
   "module": "./dist/index.module.js",
   "name": "w3c-xmlhttprequest",
   "optionalDependencies": {},
+  "prettier": {
+    "arrowParens": "always",
+    "bracketSpacing": true,
+    "endOfLine": "lf",
+    "quoteProps": "as-needed",
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "none"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ykzts/node-xmlhttprequest.git"
   },
   "scripts": {
     "build": "microbundle --external http,https --format cjs,es --strict --target node",
+    "format": "prettier --write .",
     "lint": "eslint .",
     "test": "mocha test/**/*.js"
   },

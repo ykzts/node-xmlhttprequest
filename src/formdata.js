@@ -25,7 +25,9 @@
 export default class FormData {
   constructor() {
     if (!(this instanceof FormData)) {
-      throw new TypeError('DOM object constructor cannot be called as a function.');
+      throw new TypeError(
+        'DOM object constructor cannot be called as a function.'
+      );
     }
   }
 

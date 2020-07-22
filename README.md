@@ -19,9 +19,13 @@ var XMLHttpRequest = require('w3c-xmlhttprequest').XMLHttpRequest;
 
 var client = new XMLHttpRequest();
 client.open('GET', 'http://example.com/');
-client.addEventListener('load', function(event) {
-  console.log('HTTP Request OSHIMAI.');
-}, false);
+client.addEventListener(
+  'load',
+  function (event) {
+    console.log('HTTP Request OSHIMAI.');
+  },
+  false
+);
 client.send();
 ```
 
@@ -33,13 +37,17 @@ var XMLHttpRequest = require('w3c-xmlhttprequest').XMLHttpRequest;
 var client = new XMLHttpRequest();
 client.open('GET', 'http://exmaple.com/data.json');
 client.responseType = 'json';
-client.addEventListener('load', function() {
-  var data = client.response;
-  if (data.meta.status !== 200) {
-    return;
-  }
-  console.log(data.response.blog.title);
-}, false);
+client.addEventListener(
+  'load',
+  function () {
+    var data = client.response;
+    if (data.meta.status !== 200) {
+      return;
+    }
+    console.log(data.response.blog.title);
+  },
+  false
+);
 client.send();
 ```
 

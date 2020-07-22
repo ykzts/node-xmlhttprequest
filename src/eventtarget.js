@@ -36,7 +36,7 @@ function _prepareListener(listener) {
     const object = listener;
     const handleEvent = object.handleEvent;
     if (typeof handleEvent === 'function') {
-      listener = function() {
+      listener = function () {
         handleEvent.apply(object, arguments);
       };
     }
@@ -54,7 +54,7 @@ function _getEventListeners(type) {
   return listeners;
 }
 
-function _addEventListener(type, listener/* , capture */) {
+function _addEventListener(type, listener /* , capture */) {
   listener = _prepareListener(listener);
   if (typeof listener !== 'function') {
     return;
@@ -73,8 +73,13 @@ function _addEventListener(type, listener/* , capture */) {
 
 function _bubbling(event) {
   // todo: Reverse the order of event path.
-  Object.defineProperty(event, 'eventPhase', Object.assign(
-    {}, OVERRIDE_PROTECTION_DESCRIPTOR, { value: Event.BUBBLING_PHASE }));
+  Object.defineProperty(
+    event,
+    'eventPhase',
+    Object.assign({}, OVERRIDE_PROTECTION_DESCRIPTOR, {
+      value: Event.BUBBLING_PHASE
+    })
+  );
   // todo: For each object in the event path invoke its event listeners,
   // with event event as long as event's stop propagation flag is unset.
 }
@@ -99,17 +104,30 @@ function _invoke(event) {
 function _dispatch(event) {
   const eventFlag = event._flag;
   eventFlag.dispatch = true;
-  Object.defineProperty(event, 'target', Object.assign(
-    {}, OVERRIDE_PROTECTION_DESCRIPTOR, { value: this }));
+  Object.defineProperty(
+    event,
+    'target',
+    Object.assign({}, OVERRIDE_PROTECTION_DESCRIPTOR, { value: this })
+  );
   // todo: If event's target attribute value is participating in a tree, let
   // event path be a static ordered list of all its ancestors in tree order,
   // or let event path be the empty list otherwise.
-  Object.defineProperty(event, 'eventPhase', Object.assign(
-    {}, OVERRIDE_PROTECTION_DESCRIPTOR, { value: Event.CAPTURING_PHASE }));
+  Object.defineProperty(
+    event,
+    'eventPhase',
+    Object.assign({}, OVERRIDE_PROTECTION_DESCRIPTOR, {
+      value: Event.CAPTURING_PHASE
+    })
+  );
   // todo: For each object in the event path invoke its event listeners with
   // event event, as long as event's stop propagation flag is unset.
-  Object.defineProperty(event, 'eventPhase', Object.assign(
-    {}, OVERRIDE_PROTECTION_DESCRIPTOR, { value: Event.AT_TARGET }));
+  Object.defineProperty(
+    event,
+    'eventPhase',
+    Object.assign({}, OVERRIDE_PROTECTION_DESCRIPTOR, {
+      value: Event.AT_TARGET
+    })
+  );
   if (!eventFlag.stopPropagation) {
     _invoke.apply(this, arguments);
   }
@@ -128,7 +146,7 @@ function _dispatch(event) {
   return !eventFlag.canceled;
 }
 
-function _removeEventListener(type, listener/* , capture */) {
+function _removeEventListener(type, listener /* , capture */) {
   var listeners = _getEventListeners.call(this, type);
   var index = listeners.lastIndexOf(listener);
   if (index < 0) {
@@ -141,11 +159,12 @@ export default class EventTarget {
   constructor() {
     if (!(this instanceof EventTarget)) {
       throw new TypeError(
-        'DOM object constructor cannot be called as a function.');
+        'DOM object constructor cannot be called as a function.'
+      );
     }
   }
 
-  addEventListener(type, listener/* , capture */) {
+  addEventListener(type, listener /* , capture */) {
     if (listener !== null && typeof listener !== 'undefined') {
       _addEventListener.apply(this, arguments);
     }
@@ -155,8 +174,9 @@ export default class EventTarget {
     const eventFlag = event instanceof Event && event._flag;
     if (!eventFlag || eventFlag.dispatch || !eventFlag.initialized) {
       const error = new DOMException(
-        'Failed to execute \'dispatchEvent\' on \'EventTarget\': ' +
-        'The event provided is null.');
+        "Failed to execute 'dispatchEvent' on 'EventTarget': " +
+          'The event provided is null.'
+      );
       error.code = DOMException.INVALID_STATE_ERROR;
       throw error;
     }

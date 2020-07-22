@@ -24,5 +24,4 @@
 
 import EventTarget from './eventtarget';
 
-export default class XMLHttpRequestEventTarget extends EventTarget {
-}
+export default class XMLHttpRequestEventTarget extends EventTarget {}

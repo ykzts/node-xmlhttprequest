@@ -59,7 +59,8 @@ const FORBIDDEN_REQUEST_HEADERS = [
   'Proxy-.*'
 ];
 const FORBIDDEN_REQUEST_HEADERS_PATTERN = new RegExp(
-  `^(${FORBIDDEN_REQUEST_HEADERS.join('|')})$`);
+  `^(${FORBIDDEN_REQUEST_HEADERS.join('|')})$`
+);
 
 const XMLHttpRequestResponseType = [
   '',
@@ -73,8 +74,11 @@ const XMLHttpRequestResponseType = [
 function _readyStateChange(readyState) {
   const readyStateChangeEvent = new Event('');
   readyStateChangeEvent.initEvent('readystatechange', false, false);
-  Object.defineProperty(this, 'readyState', Object.assign(
-    {}, OVERRIDE_PROTECTION_DESCRIPTOR, { value: readyState }));
+  Object.defineProperty(
+    this,
+    'readyState',
+    Object.assign({}, OVERRIDE_PROTECTION_DESCRIPTOR, { value: readyState })
+  );
   this.dispatchEvent(readyStateChangeEvent);
 }
 
@@ -104,7 +108,8 @@ function _receiveResponse(response) {
     if (bufferLength === 0) {
       const buffer = this._properties.responseBuffer;
       this._properties.responseBuffer = new Buffer(
-        buffer.length + chunk.length);
+        buffer.length + chunk.length
+      );
       buffer.copy(this._properties.responseBuffer);
     }
     chunk.copy(this._properties.responseBuffer, byteOffset);
@@ -248,7 +253,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
         return this.responseText;
       case 'arraybuffer':
       case 'blob':
-        return (new Uint8Array(responseBuffer)).buffer;
+        return new Uint8Array(responseBuffer).buffer;
       case 'document':
         return null; // todo
       case 'json':
@@ -279,19 +284,25 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
 
   getAllResponseHeaders() {
     const readyState = this.readyState;
-    if ([XMLHttpRequest.UNSENT, XMLHttpRequest.OPENED].indexOf(readyState) >= 0) {
+    if (
+      [XMLHttpRequest.UNSENT, XMLHttpRequest.OPENED].indexOf(readyState) >= 0
+    ) {
       throw new Error(''); // todo
     }
     const responseHeaders = this._properties.responseHeaders;
-    return Object.keys(responseHeaders).map((key) => {
-      const value = responseHeaders[key];
-      return [key, value].join(': ');
-    }).join('\n');
+    return Object.keys(responseHeaders)
+      .map((key) => {
+        const value = responseHeaders[key];
+        return [key, value].join(': ');
+      })
+      .join('\n');
   }
 
   getResponseHeader(header) {
     const readyState = this.readyState;
-    if ([XMLHttpRequest.UNSENT, XMLHttpRequest.OPENED].indexOf(readyState) >= 0) {
+    if (
+      [XMLHttpRequest.UNSENT, XMLHttpRequest.OPENED].indexOf(readyState) >= 0
+    ) {
       throw new Error(''); // todo;
     }
     const key = header.toLowerCase();
@@ -308,10 +319,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     this._properties.uri = uri;
     this._flag.synchronous = !!async;
     if (argumentCount >= 4) {
-      this._properties.auth = [
-        user || '',
-        password || ''
-      ].join(':');
+      this._properties.auth = [user || '', password || ''].join(':');
     }
     _readyStateChange.call(this, XMLHttpRequest.OPENED);
   }
@@ -331,7 +339,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
       _receiveResponse.call(this, response);
     });
     _properties.client = client;
-    Object.keys(_properties.requestHeaders).forEach(function(key) {
+    Object.keys(_properties.requestHeaders).forEach(function (key) {
       var value = _properties.requestHeaders[key];
       client.setHeader(key, value);
     });
@@ -339,8 +347,15 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     if (body instanceof Uint8Array || body instanceof ArrayBuffer) {
       body = Buffer.from(body);
     }
-    if (typeof body === 'string' || body instanceof Buffer || body instanceof FormData) {
-      client.setHeader('Content-Length', Buffer.isBuffer(body) ? body.length : Buffer.byteLength(body));
+    if (
+      typeof body === 'string' ||
+      body instanceof Buffer ||
+      body instanceof FormData
+    ) {
+      client.setHeader(
+        'Content-Length',
+        Buffer.isBuffer(body) ? body.length : Buffer.byteLength(body)
+      );
       client.on('socket', _setDispatchProgressEvents.bind(this.upload));
       client.write(body);
     }
@@ -358,7 +373,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
   }
 }
 
-(function() {
+(function () {
   const xmlHttpRequestConstants = {
     UNSENT: {
       configurable: false,
@@ -447,6 +462,8 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     }
   };
   Object.defineProperties(XMLHttpRequest, xmlHttpRequestConstants);
-  Object.defineProperties(XMLHttpRequest.prototype, Object.assign(
-    {}, xmlHttpRequestConstants, props));
+  Object.defineProperties(
+    XMLHttpRequest.prototype,
+    Object.assign({}, xmlHttpRequestConstants, props)
+  );
 })();

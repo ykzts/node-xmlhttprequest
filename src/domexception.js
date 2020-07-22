@@ -22,10 +22,9 @@
  * THE SOFTWARE.
  */
 
-export default class DOMException extends Error {
-}
+export default class DOMException extends Error {}
 
-(function() {
+(function () {
   const domExceptionConstrants = {
     INVALID_STATE_ERROR: {
       configurable: false,

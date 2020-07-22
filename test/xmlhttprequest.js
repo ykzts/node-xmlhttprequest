@@ -26,7 +26,6 @@ const assert = require('assert');
 const http = require('http');
 const { XMLHttpRequest } = require('..');
 
-
 function receiveRequest(req, res) {
   const url = new URL(req.url, 'http://example.test');
   const body = url.searchParams.get('body') || '';
@@ -37,11 +36,11 @@ function receiveRequest(req, res) {
   res.end();
 }
 
-describe('XMLHttpRequest', function() {
+describe('XMLHttpRequest', function () {
   const defaultPort = 10000;
   let server;
 
-  before(function(done) {
+  before(function (done) {
     server = http.createServer();
     server.on('request', receiveRequest);
     const retry = (port) => {
@@ -60,25 +59,29 @@ describe('XMLHttpRequest', function() {
     retry(defaultPort);
   });
 
-  after(function(done) {
-    server.close(function() {
+  after(function (done) {
+    server.close(function () {
       done();
     });
   });
 
-  it('send GET request', function(done) {
+  it('send GET request', function (done) {
     const uri = this.baseUri + '/?body=send%20request';
     const client = new XMLHttpRequest();
     client.open('GET', uri);
-    client.addEventListener('load', function() {
-      assert.strictEqual(200, this.status);
-      assert.strictEqual('send request', this.responseText);
-      done();
-    }, false);
+    client.addEventListener(
+      'load',
+      function () {
+        assert.strictEqual(200, this.status);
+        assert.strictEqual('send request', this.responseText);
+        done();
+      },
+      false
+    );
     client.send(null);
   });
 
-  it('onreadystatechange', function(done) {
+  it('onreadystatechange', function (done) {
     const uri = this.baseUri + '/';
     const states = [
       XMLHttpRequest.OPENED,
@@ -87,32 +90,40 @@ describe('XMLHttpRequest', function() {
       XMLHttpRequest.DONE
     ];
     const client = new XMLHttpRequest();
-    client.addEventListener('readystatechange', function() {
-      const state = this.readyState;
-      const index = states.indexOf(state);
-      if (index >= 0) {
-        states.splice(index, 1);
-      }
-      if (state === this.DONE) {
-        assert.ok(states.length === 0);
-        done();
-      }
-    }, false);
+    client.addEventListener(
+      'readystatechange',
+      function () {
+        const state = this.readyState;
+        const index = states.indexOf(state);
+        if (index >= 0) {
+          states.splice(index, 1);
+        }
+        if (state === this.DONE) {
+          assert.ok(states.length === 0);
+          done();
+        }
+      },
+      false
+    );
     client.open('GET', uri);
     client.send(null);
   });
 
-  it('parse JSON', function(done) {
+  it('parse JSON', function (done) {
     const uri = this.baseUri + '/?body=%7B%22test%22%3A%22value%22%7D';
     const client = new XMLHttpRequest();
     client.open('GET', uri);
     client.responseType = 'json';
-    client.addEventListener('load', function() {
-      const response = this.response;
-      assert.ok(typeof response !== 'string');
-      assert.strictEqual(response.test, 'value');
-      done();
-    }, false);
+    client.addEventListener(
+      'load',
+      function () {
+        const response = this.response;
+        assert.ok(typeof response !== 'string');
+        assert.strictEqual(response.test, 'value');
+        done();
+      },
+      false
+    );
     client.send(null);
   });
 });
