@@ -1,31 +1,35 @@
 {
   "author": "Yamagishi Kazutoshi",
-  "name": "w3c-xmlhttprequest",
-  "description": "Server-side XMLHttpRequest.",
-  "version": "2.1.3",
-  "license": "MIT",
-  "homepage": "https://github.com/ykzts/node-xmlhttprequest",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/ykzts/node-xmlhttprequest.git"
-  },
-  "source": "./src/index.js",
-  "main": "./dist/index.js",
-  "module": "./dist/index.module.js",
-  "scripts": {
-    "build": "microbundle --external http,https --format cjs,es --strict --target node",
-    "lint": "eslint .",
-    "test": "mocha test/**/*.js"
-  },
   "browser": "./browser.js",
   "dependencies": {},
+  "description": "Server-side XMLHttpRequest.",
   "devDependencies": {
     "eslint": "^7.5.0",
     "microbundle": "^0.12.3",
     "mocha": "^8.0.1"
   },
-  "optionalDependencies": {},
   "engines": {
     "node": ">= 10.13.0"
-  }
+  },
+  "files": [
+    "dist",
+    "browser.js"
+  ],
+  "homepage": "https://github.com/ykzts/node-xmlhttprequest",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.module.js",
+  "name": "w3c-xmlhttprequest",
+  "optionalDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ykzts/node-xmlhttprequest.git"
+  },
+  "scripts": {
+    "build": "microbundle --external http,https --format cjs,es --strict --target node",
+    "lint": "eslint .",
+    "test": "mocha test/**/*.js"
+  },
+  "source": "./src/index.js",
+  "version": "2.1.3"
 }
