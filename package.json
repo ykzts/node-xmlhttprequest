@@ -11,8 +11,8 @@
   },
   "main": "./lib/index.js",
   "scripts": {
-    "lint": "npm install && eslint lib/**/*.js test/**/*.js",
-    "test": "npm install && mocha test/**/*.js"
+    "lint": "eslint .",
+    "test": "mocha test/**/*.js"
   },
   "browser": {
     "./lib/index.js": "./lib/browser.js"
