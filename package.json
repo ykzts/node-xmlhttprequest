@@ -2,7 +2,7 @@
   "author": "Yamagishi Kazutoshi",
   "name": "w3c-xmlhttprequest",
   "description": "Server-side XMLHttpRequest.",
-  "version": "2.1.3",
+  "version": "2.2.0",
   "license": "MIT",
   "homepage": "https://github.com/ykzts/node-xmlhttprequest",
   "repository": {
