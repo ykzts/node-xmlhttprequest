@@ -24,7 +24,6 @@
 
 import * as http from 'http';
 import * as https from 'https';
-import { parse as uriParse } from 'url';
 
 export const createClient = (function() {
   const defaultOptions = {
@@ -39,10 +38,10 @@ export const createClient = (function() {
 
   function optionsParse(options) {
     const newOptions = {};
-    const parsedUriObj = uriParse(options.uri || '', false, true);
+    const url = new URL(options.uri);
     for (const key in defaultOptions) {
       if (Object.prototype.hasOwnProperty.call(defaultOptions, key)) {
-        const value = parsedUriObj[key];
+        const value = url[key];
         newOptions[key] = value || defaultOptions[key];
       }
     }
@@ -53,8 +52,17 @@ export const createClient = (function() {
       newOptions.agent = https.globalAgent;
       newOptions.port = 443;
     }
-    if (typeof parsedUriObj.hostname !== 'undefined') {
-      newOptions.host = parsedUriObj.hostname;
+    if (typeof url.hostname !== 'undefined') {
+      newOptions.host = url.hostname;
+    }
+    if (url.username && url.password) {
+      newOptions.auth = url.username + ':' + url.password;
+    }
+    if (url.pathname) {
+      newOptions.path = url.pathname;
+    }
+    if (url.search) {
+      newOptions.path += url.search;
     }
     return newOptions;
   }

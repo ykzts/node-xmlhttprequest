@@ -24,18 +24,13 @@
 
 const assert = require('assert');
 const http = require('http');
-const url = require('url');
 const { XMLHttpRequest } = require('..');
 
-function parseQueryString(uri) {
-  const urlObj = url.parse(uri, true);
-  return urlObj.query;
-}
 
 function receiveRequest(req, res) {
-  const query = parseQueryString(req.url);
-  const body = query.body || '';
-  res.writeHead(+(query.status || 200), {
+  const url = new URL(req.url, 'http://example.test');
+  const body = url.searchParams.get('body') || '';
+  res.writeHead(+(url.searchParams.get('status') || 200), {
     'Content-Type': 'text/plain'
   });
   res.write(body);

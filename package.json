@@ -13,7 +13,7 @@
   "main": "./dist/index.js",
   "module": "./dist/index.module.js",
   "scripts": {
-    "build": "microbundle --external http,https,url --format cjs,es --strict --target node",
+    "build": "microbundle --external http,https --format cjs,es --strict --target node",
     "lint": "eslint .",
     "test": "mocha test/**/*.js"
   },
