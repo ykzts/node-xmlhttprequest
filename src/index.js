@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2011-2017 Yamagishi Kazutoshi
+ * Copyright (c) 2011-2020 Yamagishi Kazutoshi
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,11 +22,6 @@
  * THE SOFTWARE.
  */
 
-'use strict';
-
-const XMLHttpRequestEventTarget = require('./xmlhttprequesteventtarget');
-
-class XMLHttpRequestUpload extends XMLHttpRequestEventTarget {
-}
-
-module.exports = XMLHttpRequestUpload;
+export { default as XMLHttpRequest } from './xmlhttprequest';
+export { default as XMLHttpRequestUpload } from './xmlhttprequestupload';
+export { default as FormData } from './formdata';

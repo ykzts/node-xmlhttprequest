@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2011-2017 Yamagishi Kazutoshi
+ * Copyright (c) 2011-2020 Yamagishi Kazutoshi
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the 'Software'), to deal
@@ -22,16 +22,14 @@
  * THE SOFTWARE.
  */
 
-'use strict';
-
-const http = require('http');
-const constants = require('./constants');
-const Event = require('./event');
-const FormData = require('./formdata');
-const ProgressEvent = require('./progressevent');
-const utils = require('./utils');
-const XMLHttpRequestEventTarget = require('./xmlhttprequesteventtarget');
-const XMLHttpRequestUpload = require('./xmlhttprequestupload');
+import * as http from 'http';
+import * as constants from './constants';
+import Event from './event';
+import FormData from './formdata';
+import ProgressEvent from './progressevent';
+import * as utils from './utils';
+import XMLHttpRequestEventTarget from './xmlhttprequesteventtarget';
+import XMLHttpRequestUpload from './xmlhttprequestupload';
 
 const HTTP_STATUS_CODES = http.STATUS_CODES;
 const OVERRIDE_PROTECTION_DESCRIPTOR = constants.OVERRIDE_PROTECTION_DESCRIPTOR;
@@ -140,7 +138,7 @@ function _setDispatchProgressEvents(stream) {
   });
 }
 
-class XMLHttpRequest extends XMLHttpRequestEventTarget {
+export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
   constructor(options) {
     super();
     options = options || {};
@@ -452,5 +450,3 @@ class XMLHttpRequest extends XMLHttpRequestEventTarget {
   Object.defineProperties(XMLHttpRequest.prototype, Object.assign(
     {}, xmlHttpRequestConstants, props));
 })();
-
-module.exports = XMLHttpRequest;

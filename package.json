@@ -9,21 +9,23 @@
     "type": "git",
     "url": "git://github.com/ykzts/node-xmlhttprequest.git"
   },
-  "main": "./lib/index.js",
+  "source": "./src/index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.module.js",
   "scripts": {
+    "build": "microbundle --external http,https,url --format cjs,es --strict --target node",
     "lint": "eslint .",
     "test": "mocha test/**/*.js"
   },
-  "browser": {
-    "./lib/index.js": "./lib/browser.js"
-  },
+  "browser": "./browser.js",
   "dependencies": {},
   "devDependencies": {
     "eslint": "^7.5.0",
+    "microbundle": "^0.12.3",
     "mocha": "^8.0.1"
   },
   "optionalDependencies": {},
   "engines": {
-    "node": ">= 4.0.0"
+    "node": ">= 10.13.0"
   }
 }

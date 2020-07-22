@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013-2017 Yamagishi Kazutoshi
+ * Copyright (c) 2013-2020 Yamagishi Kazutoshi
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,11 @@
  * THE SOFTWARE.
  */
 
-'use strict';
+import * as http from 'http';
+import * as https from 'https';
+import { parse as uriParse } from 'url';
 
-const http = require('http');
-const https = require('https');
-const uriParse = require('url').parse;
-
-var utils = {};
-
-utils.createClient = (function() {
+export const createClient = (function() {
   const defaultOptions = {
     agent: http.globalAgent,
     auth: '',
@@ -63,13 +59,11 @@ utils.createClient = (function() {
     return newOptions;
   }
 
-  function createClient(options, async, callback) {
+  function _createClient(options, async, callback) {
     options = optionsParse(options || {});
     const client = new http.ClientRequest(options, callback);
     return client;
   }
 
-  return createClient;
+  return _createClient;
 })();
-
-module.exports = utils;

@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2012-2017 Yamagishi Kazutoshi
+ * Copyright (c) 2016-2020 Yamagishi Kazutoshi
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,18 +22,7 @@
  * THE SOFTWARE.
  */
 
-'use strict';
-
-class FormData {
-  constructor() {
-    if (!(this instanceof FormData)) {
-      throw new TypeError('DOM object constructor cannot be called as a function.');
-    }
-  }
-
-  append(/* name, value, filename */) {
-    // todo
-  }
-}
-
-module.exports = FormData;
+/* global window */
+exports.XMLHttpRequest = window.XMLHttpRequest;
+exports.XMLHttpRequestUpload = window.XMLHttpRequestUpload;
+exports.FormData = window.FormData;

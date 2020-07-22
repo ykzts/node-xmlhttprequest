@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013-2017 Yamagishi Kazutoshi
+ * Copyright (c) 2013-2020 Yamagishi Kazutoshi
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,10 +22,8 @@
  * THE SOFTWARE.
  */
 
-'use strict';
-
-const constants = require('./constants');
-const Event = require('./event');
+import * as constants from './constants';
+import Event from './event';
 
 const OVERRIDE_PROTECTION_DESCRIPTOR = constants.OVERRIDE_PROTECTION_DESCRIPTOR;
 const PROGRESS_EVENT_PROPERTIES = [
@@ -34,7 +32,7 @@ const PROGRESS_EVENT_PROPERTIES = [
   'total'
 ];
 
-class ProgressEvent extends Event {
+export default class ProgressEvent extends Event {
   constructor(type, eventInitDict) {
     super('');
     const eventFlag = this._flag;
@@ -70,5 +68,3 @@ class ProgressEvent extends Event {
   });
   Object.defineProperties(ProgressEvent.prototype, props);
 })();
-
-module.exports = ProgressEvent;

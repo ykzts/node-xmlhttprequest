@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013-2017 Yamagishi Kazutoshi
+ * Copyright (c) 2013-2020 Yamagishi Kazutoshi
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,12 +22,10 @@
  * THE SOFTWARE.
  */
 
-'use strict';
-
 const assert = require('assert');
 const http = require('http');
 const url = require('url');
-const XMLHttpRequest = require('../lib/xmlhttprequest');
+const { XMLHttpRequest } = require('..');
 
 function parseQueryString(uri) {
   const urlObj = url.parse(uri, true);
