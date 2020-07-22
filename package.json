@@ -23,7 +23,7 @@
   "optionalDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git://github.com/ykzts/node-xmlhttprequest.git"
+    "url": "https://github.com/ykzts/node-xmlhttprequest.git"
   },
   "scripts": {
     "build": "microbundle --external http,https --format cjs,es --strict --target node",
