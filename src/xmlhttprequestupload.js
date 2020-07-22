@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Yamagishi Kazutoshi
+ * Copyright (c) 2011-2020 Yamagishi Kazutoshi
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,14 +22,7 @@
  * THE SOFTWARE.
  */
 
-'use strict';
+import XMLHttpRequestEventTarget from './xmlhttprequesteventtarget';
 
-const OVERRIDE_PROTECTION_DESCRIPTOR = {
-  configurable: true,
-  enumerable: true,
-  writable: false
-};
-
-module.exports = {
-  OVERRIDE_PROTECTION_DESCRIPTOR
-};
+export default class XMLHttpRequestUpload extends XMLHttpRequestEventTarget {
+}

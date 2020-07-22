@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2011-2017 Yamagishi Kazutoshi
+ * Copyright (c) 2013-2020 Yamagishi Kazutoshi
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,14 +22,18 @@
  * THE SOFTWARE.
  */
 
-'use strict';
+export default class DOMException extends Error {
+}
 
-const XMLHttpRequest = require('./xmlhttprequest');
-const XMLHttpRequestUpload = require('./xmlhttprequestupload');
-const FormData = require('./formdata');
-
-module.exports = {
-  XMLHttpRequest,
-  XMLHttpRequestUpload,
-  FormData
-};
+(function() {
+  const domExceptionConstrants = {
+    INVALID_STATE_ERROR: {
+      configurable: false,
+      enumerable: true,
+      value: 11,
+      writable: false
+    }
+  };
+  Object.defineProperties(DOMException, domExceptionConstrants);
+  Object.defineProperties(DOMException.prototype, domExceptionConstrants);
+})();

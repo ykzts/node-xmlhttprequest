@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013-2017 Yamagishi Kazutoshi
+ * Copyright (c) 2013-2020 Yamagishi Kazutoshi
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +22,7 @@
  * THE SOFTWARE.
  */
 
-'use strict';
-
-const constants = require('./constants');
+import * as constants from './constants';
 
 const OVERRIDE_PROTECTION_DESCRIPTOR = constants.OVERRIDE_PROTECTION_DESCRIPTOR;
 
@@ -91,7 +89,7 @@ const props = {
   })
 };
 
-class Event {
+export default class Event {
   constructor(type) {
     if (arguments.length === 0) {
       throw new TypeError('Not enough arguments.');
@@ -162,5 +160,3 @@ class Event {
 (function() {
   Object.defineProperties(Event, eventConstants);
 })();
-
-module.exports = Event;

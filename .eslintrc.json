@@ -4,6 +4,9 @@
     "node": true
   },
   "extends": "eslint:recommended",
+  "parserOptions": {
+    "sourceType": "module"
+  },
   "rules": {
     "block-spacing": [2, "always"],
     "brace-style": [2, "1tbs"],

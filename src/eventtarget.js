@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2012-2017 Yamagishi Kazutoshi
+ * Copyright (c) 2012-2020 Yamagishi Kazutoshi
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,11 +22,9 @@
  * THE SOFTWARE.
  */
 
-'use strict';
-
-const constants = require('./constants');
-const DOMException = require('./domexception');
-const Event = require('./event');
+import * as constants from './constants';
+import DOMException from './domexception';
+import Event from './event';
 
 const OVERRIDE_PROTECTION_DESCRIPTOR = constants.OVERRIDE_PROTECTION_DESCRIPTOR;
 
@@ -139,7 +137,7 @@ function _removeEventListener(type, listener/* , capture */) {
   listeners.splice(index, 1);
 }
 
-class EventTarget {
+export default class EventTarget {
   constructor() {
     if (!(this instanceof EventTarget)) {
       throw new TypeError(
@@ -169,5 +167,3 @@ class EventTarget {
     return _removeEventListener.apply(this, arguments);
   }
 }
-
-module.exports = EventTarget;

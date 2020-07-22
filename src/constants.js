@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2012-2017 Yamagishi Kazutoshi
+ * Copyright (c) 2016-2020 Yamagishi Kazutoshi
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,11 +22,8 @@
  * THE SOFTWARE.
  */
 
-'use strict';
-
-const EventTarget = require('./eventtarget');
-
-class XMLHttpRequestEventTarget extends EventTarget {
-}
-
-module.exports = XMLHttpRequestEventTarget;
+export const OVERRIDE_PROTECTION_DESCRIPTOR = {
+  configurable: true,
+  enumerable: true,
+  writable: false
+};
