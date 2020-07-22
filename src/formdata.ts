@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2016-2020 Yamagishi Kazutoshi
+// Copyright (c) 2012-2020 Yamagishi Kazutoshi
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-/* global window */
-exports.XMLHttpRequest = window.XMLHttpRequest;
-exports.XMLHttpRequestUpload = window.XMLHttpRequestUpload;
-exports.FormData = window.FormData;
+/**
+ * @see {@link https://xhr.spec.whatwg.org/#interface-formdata XMLHttpRequest Standard - 5. Interface FormData}
+ */
+export default class FormData {
+  /**
+   * @todo Implement this function.
+   */
+  append(/* name, value, filename */): void {
+    // wip
+  }
+}
