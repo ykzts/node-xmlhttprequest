@@ -26,11 +26,7 @@ import * as constants from './constants';
 import Event from './event';
 
 const OVERRIDE_PROTECTION_DESCRIPTOR = constants.OVERRIDE_PROTECTION_DESCRIPTOR;
-const PROGRESS_EVENT_PROPERTIES = [
-  'lengthComputable',
-  'loaded',
-  'total'
-];
+const PROGRESS_EVENT_PROPERTIES = ['lengthComputable', 'loaded', 'total'];
 
 export default class ProgressEvent extends Event {
   constructor(type, eventInitDict) {
@@ -45,12 +41,16 @@ export default class ProgressEvent extends Event {
       value: type
     });
     if (typeof eventInitDict !== 'undefined') {
-      PROGRESS_EVENT_PROPERTIES.forEach(function(propertyName) {
+      PROGRESS_EVENT_PROPERTIES.forEach(function (propertyName) {
         const value = +eventInitDict[propertyName];
         if (typeof value === 'number' && !isNaN(value)) {
-          props[propertyName] = Object.assign({}, OVERRIDE_PROTECTION_DESCRIPTOR, {
-            value
-          });
+          props[propertyName] = Object.assign(
+            {},
+            OVERRIDE_PROTECTION_DESCRIPTOR,
+            {
+              value
+            }
+          );
         }
       });
     }
@@ -58,10 +58,10 @@ export default class ProgressEvent extends Event {
   }
 }
 
-(function() {
+(function () {
   const defaultValue = 0;
   const props = {};
-  PROGRESS_EVENT_PROPERTIES.forEach(function(propertyName) {
+  PROGRESS_EVENT_PROPERTIES.forEach(function (propertyName) {
     props[propertyName] = Object.assign({}, OVERRIDE_PROTECTION_DESCRIPTOR, {
       value: defaultValue
     });

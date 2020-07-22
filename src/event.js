@@ -157,6 +157,6 @@ export default class Event {
   }
 }
 
-(function() {
+(function () {
   Object.defineProperties(Event, eventConstants);
 })();

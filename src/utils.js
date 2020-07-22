@@ -25,7 +25,7 @@
 import * as http from 'http';
 import * as https from 'https';
 
-export const createClient = (function() {
+export const createClient = (function () {
   const defaultOptions = {
     agent: http.globalAgent,
     auth: '',
