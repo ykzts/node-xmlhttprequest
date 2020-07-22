@@ -1,4 +1,4 @@
-# w3c-xmlhttprequest [![Build Status](https://travis-ci.org/ykzts/node-xmlhttprequest.svg?branch=master)](https://travis-ci.org/ykzts/node-xmlhttprequest)
+# w3c-xmlhttprequest [![Node.js CI](https://github.com/ykzts/node-xmlhttprequest/workflows/Node.js%20CI/badge.svg)](https://github.com/ykzts/node-xmlhttprequest/actions?query=workflow%3A%22Node.js+CI%22)
 
 Server-side XMLHttpRequest like [W3C spec](https://www.w3.org/TR/2014/WD-XMLHttpRequest-20140130/) for [Node](https://nodejs.org/).
 
