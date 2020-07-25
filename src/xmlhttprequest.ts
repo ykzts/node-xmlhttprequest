@@ -225,7 +225,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     for (const name of headerNames) {
       const value = this.#responseHeaders[name];
 
-      result += `${name}: ${value}`;
+      result += `${name}: ${value}\r\n`;
     }
 
     return result;

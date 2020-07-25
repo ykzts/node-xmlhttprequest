@@ -24,6 +24,8 @@ import * as http from 'http';
 import getPort from 'get-port';
 import { XMLHttpRequest } from '../..';
 
+const referenceTime = new Date(Date.UTC(1999, 2, 3, 9, 1, 7, 8));
+
 const launchMockServer = (port: number) =>
   new Promise<http.Server>((resolve) => {
     const server = http.createServer((req, res) => {
@@ -33,7 +35,9 @@ const launchMockServer = (port: number) =>
       const body = url.searchParams.get('body') || '';
 
       res.writeHead(status, {
-        'Content-Type': type
+        'Cache-Control': 'max-age=60',
+        'Content-Type': type,
+        Date: referenceTime.toUTCString()
       });
       res.write(body);
       res.end();
@@ -102,6 +106,45 @@ describe('XMLHttpRequest', () => {
       });
 
       client.open('GET', `${baseURL}/?body=onreadystatechange`);
+      client.send(null);
+    });
+  });
+
+  describe('getAllResponseHeaders()', () => {
+    it('returns all response headers', (done) => {
+      const client = new XMLHttpRequest();
+
+      client.addEventListener('load', () => {
+        expect(client.getAllResponseHeaders()).toBe(
+          [
+            'cache-control: max-age=60',
+            'connection: close',
+            'content-type: text/html',
+            'date: Wed, 03 Mar 1999 09:01:07 GMT',
+            'transfer-encoding: chunked',
+            ''
+          ].join('\r\n')
+        );
+
+        done();
+      });
+
+      client.open('GET', `${baseURL}/?type=text/html`);
+      client.send(null);
+    });
+  });
+
+  describe('getResponseHeader()', () => {
+    it('returns response header value', (done) => {
+      const client = new XMLHttpRequest();
+
+      client.addEventListener('load', () => {
+        expect(client.getResponseHeader('content-type')).toBe('image/png');
+
+        done();
+      });
+
+      client.open('GET', `${baseURL}/?type=image/png`);
       client.send(null);
     });
   });
