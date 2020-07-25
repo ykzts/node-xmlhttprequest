@@ -26,10 +26,10 @@ import { XMLHttpRequest } from '../..';
 
 const referenceTime = new Date(Date.UTC(1999, 2, 3, 9, 1, 7, 8));
 
-const launchMockServer = (port: number) =>
+const launchMockServer = (port: number, hostname = 'localhost') =>
   new Promise<http.Server>((resolve) => {
     const server = http.createServer((req, res) => {
-      const url = new URL(req.url || '/', 'http://example.test');
+      const url = new URL(req.url || '/', `http://${hostname}:${port}`);
       const status = parseInt(url.searchParams.get('status') || '200', 10);
       const type = url.searchParams.get('type') || 'text/plain';
       const body = url.searchParams.get('body') || '';
@@ -42,7 +42,7 @@ const launchMockServer = (port: number) =>
       res.write(body);
       res.end();
     });
-    server.listen(port, 'localhost', () => {
+    server.listen(port, hostname, () => {
       resolve(server);
     });
   });
