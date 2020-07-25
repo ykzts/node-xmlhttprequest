@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "baseUrl": ".",
+    "module": "esnext",
+    "noEmit": true,
+    "strict": true,
+    "target": "esnext"
+  }
+}

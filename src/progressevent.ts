@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2016-2020 Yamagishi Kazutoshi
+// Copyright (c) 2013-2020 Yamagishi Kazutoshi
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-/* global window */
-exports.XMLHttpRequest = window.XMLHttpRequest;
-exports.XMLHttpRequestUpload = window.XMLHttpRequestUpload;
-exports.FormData = window.FormData;
+import Event, { EventInit } from './dom/event';
+
+/**
+ * @see {@link https://xhr.spec.whatwg.org/#interface-progressevent XMLHttpRequest Standard - 6. Interface ProgressEvent}
+ */
+export interface ProgressEventInit extends EventInit {
+  lengthComputable?: boolean;
+  loaded?: number;
+  total?: number;
+}
+
+export default class ProgressEvent extends Event {
+  #lengthComputable: boolean;
+  #loaded: number;
+  #total: number;
+
+  get lengthComputable(): boolean {
+    return this.#lengthComputable;
+  }
+
+  get loaded(): number {
+    return this.#loaded;
+  }
+
+  get total(): number {
+    return this.#total;
+  }
+
+  constructor(type: string, eventInit: ProgressEventInit = {}) {
+    super(type, eventInit);
+
+    this.#lengthComputable = eventInit.lengthComputable ?? false;
+    this.#loaded = eventInit.loaded ?? 0;
+    this.#total = eventInit.total ?? 0;
+  }
+}
