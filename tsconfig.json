@@ -2,6 +2,7 @@
   "compilerOptions": {
     "allowJs": false,
     "baseUrl": ".",
+    "esModuleInterop": true,
     "module": "esnext",
     "noEmit": true,
     "strict": true,
