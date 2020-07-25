@@ -125,7 +125,8 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     return this.#readyState;
   }
 
-  get response(): ArrayBuffer | Buffer | string | null {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  get response(): any {
     switch (this.responseType) {
       case 'arraybuffer':
         return new Uint8Array(this.#responseBuffer).buffer;
