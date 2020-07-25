@@ -95,5 +95,5 @@
   },
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
-  "version": "v3.0.0-beta.2"
+  "version": "3.0.0-beta.2"
 }
