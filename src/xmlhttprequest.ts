@@ -152,8 +152,8 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
   set responseType(value: XMLHttpRequestResponseType) {
     if (ACCEPTABLE_RESPONSE_TYPES.includes(value)) {
       if (
-        XMLHttpRequest.LOADING === this.readyState ||
-        XMLHttpRequest.DONE === this.readyState
+        this.readyState === XMLHttpRequest.LOADING ||
+        this.readyState === XMLHttpRequest.DONE
       ) {
         // TODO: Add human readable message.
         throw new DOMException('', 'InvalidStateError');
@@ -200,8 +200,8 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
    */
   abort(): void {
     if (
-      XMLHttpRequest.HEADERS_RECEIVED === this.readyState ||
-      XMLHttpRequest.LOADING === this.readyState
+      this.readyState === XMLHttpRequest.HEADERS_RECEIVED ||
+      this.readyState === XMLHttpRequest.LOADING
     ) {
       this.#client?.abort();
     }
