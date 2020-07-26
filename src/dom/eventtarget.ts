@@ -47,6 +47,9 @@ export default class EventTarget {
     this.#listeners = {};
   }
 
+  /**
+   * @see {@link https://dom.spec.whatwg.org/#dom-eventtarget-addeventlistener DOM Standard - The addEventListener(type, callback, options) method}
+   */
   addEventListener(
     type: string,
     listener: EventListener,
@@ -60,7 +63,15 @@ export default class EventTarget {
     }
   }
 
+  /**
+   * @see {@link https://dom.spec.whatwg.org/#dom-eventtarget-dispatchevent DOM Standard - The dispatchEvent(event) method}
+   */
   dispatchEvent(event: Event): boolean {
+    if (!(event instanceof Event)) {
+      // TODO: Add human readable message.
+      throw new TypeError('');
+    }
+
     event[internalEventSymbol].eventPhase = Event.CAPTURING_PHASE;
     event[internalEventSymbol].target = this;
     event[internalEventSymbol].eventPhase = Event.AT_TARGET;
@@ -82,6 +93,9 @@ export default class EventTarget {
     return event.defaultPrevented;
   }
 
+  /**
+   * @see {@link https://dom.spec.whatwg.org/#dom-eventtarget-removeeventlistener DOM Standard - The removeEventListener(type, callback, options) method}
+   */
   removeEventListener(
     type: string,
     listener: EventListener,
