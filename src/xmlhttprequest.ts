@@ -120,6 +120,8 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
   #responseURL: string;
   #status: number;
   #statusText: string;
+  #timeout: number;
+  #withCredentials: boolean;
 
   get readyState(): number {
     return this.#readyState;
@@ -179,6 +181,30 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     return this.#statusText;
   }
 
+  get timeout(): number {
+    return this.#timeout;
+  }
+
+  set timeout(value: number) {
+    this.#timeout = value;
+  }
+
+  get withCredentials(): boolean {
+    return this.#withCredentials;
+  }
+
+  set withCredentials(value: boolean) {
+    if (
+      this.readyState !== XMLHttpRequest.UNSENT &&
+      this.readyState !== XMLHttpRequest.OPENED
+    ) {
+      // TODO: Add human readable message.
+      throw new DOMException('', 'InvalidStateError');
+    }
+
+    this.#withCredentials = value;
+  }
+
   constructor() {
     super();
 
@@ -193,6 +219,8 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     this.#responseURL = '';
     this.#status = 0;
     this.#statusText = '';
+    this.#timeout = 0;
+    this.#withCredentials = false;
   }
 
   /**
