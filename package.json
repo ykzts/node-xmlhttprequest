@@ -14,6 +14,7 @@
     "@types/jest": "^26.0.7",
     "@typescript-eslint/eslint-plugin": "^3.7.0",
     "@typescript-eslint/parser": "^3.7.0",
+    "conventional-github-releaser": "^3.1.5",
     "eslint": "^7.5.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
@@ -22,6 +23,7 @@
     "jest": "^26.1.0",
     "microbundle": "^0.12.3",
     "prettier": "^2.0.5",
+    "standard-version": "^8.0.2",
     "ts-jest": "^26.1.3"
   },
   "engines": {
@@ -104,6 +106,7 @@
     "build": "microbundle --external http,https,perf_hooks --format cjs,es --strict --target node",
     "format": "prettier --write .",
     "lint": "eslint .",
+    "release": "standard-version",
     "test": "jest"
   },
   "source": "./src/index.ts",
