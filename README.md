@@ -35,7 +35,7 @@ client.send();
 import { XMLHttpRequest } from 'w3c-xmlhttprequest';
 
 const client = new XMLHttpRequest();
-client.open('GET', 'http://exmaple.com/data.json');
+client.open('GET', 'https://exmaple.com/data.json');
 client.responseType = 'json';
 client.addEventListener('load', () => {
   const data = client.response;
