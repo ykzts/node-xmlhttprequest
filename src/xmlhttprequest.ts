@@ -322,6 +322,14 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
       this.#readyState = XMLHttpRequest.UNSENT;
     });
 
+    this.#client.addListener('error', () => {
+      this.dispatchEvent(new ProgressEvent('error'));
+      this.upload.dispatchEvent(new ProgressEvent('error'));
+
+      this.#client = null;
+      this.#readyState = XMLHttpRequest.DONE;
+    });
+
     this.#client.addListener('response', (response) => {
       this.#readyState = XMLHttpRequest.HEADERS_RECEIVED;
       this.dispatchEvent(new Event('readystatechange'));

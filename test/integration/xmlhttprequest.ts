@@ -65,6 +65,19 @@ describe('XMLHttpRequest', () => {
     baseURL = null;
   });
 
+  describe("addEventListener(event: 'error')", () => {
+    it('basic use case', (done) => {
+      const client = new XMLHttpRequest();
+
+      client.addEventListener('error', () => {
+        done();
+      });
+
+      client.open('GET', 'http://example.invalid/path/to');
+      client.send(null);
+    });
+  });
+
   describe("addEventListener(event: 'load')", () => {
     it('basic use case', (done) => {
       const client = new XMLHttpRequest();
