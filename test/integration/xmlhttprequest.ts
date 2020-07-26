@@ -65,6 +65,25 @@ describe('XMLHttpRequest', () => {
     baseURL = null;
   });
 
+  describe('abort()', () => {
+    it('basic use case', (done) => {
+      const client = new XMLHttpRequest();
+
+      client.addEventListener('abort', (event) => {
+        expect(event.type).toBe('abort');
+        expect(client.readyState).toBe(XMLHttpRequest.UNSENT);
+
+        done();
+      });
+      client.addEventListener('loadstart', () => {
+        client.abort();
+      });
+
+      client.open('GET', `${baseURL}/?body=abort`);
+      client.send();
+    });
+  });
+
   describe("addEventListener(event: 'error')", () => {
     it('basic use case', (done) => {
       const client = new XMLHttpRequest();

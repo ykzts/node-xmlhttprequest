@@ -200,11 +200,22 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
    */
   abort(): void {
     if (
-      this.readyState === XMLHttpRequest.HEADERS_RECEIVED ||
-      this.readyState === XMLHttpRequest.LOADING
+      this.readyState === XMLHttpRequest.UNSENT ||
+      this.readyState === XMLHttpRequest.OPENED ||
+      this.readyState === XMLHttpRequest.DONE ||
+      !this.#client
     ) {
-      this.#client?.abort();
+      return;
     }
+
+    this.#client.destroy();
+
+    this.#readyState = XMLHttpRequest.UNSENT;
+
+    this.dispatchEvent(new ProgressEvent('abort'));
+    this.upload.dispatchEvent(new ProgressEvent('abort'));
+
+    this.#client = null;
   }
 
   /**
@@ -312,14 +323,6 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
       path,
       port,
       protocol
-    });
-
-    this.#client.addListener('abort', () => {
-      this.dispatchEvent(new ProgressEvent('abort'));
-      this.upload.dispatchEvent(new ProgressEvent('abort'));
-
-      this.#client = null;
-      this.#readyState = XMLHttpRequest.UNSENT;
     });
 
     this.#client.addListener('error', () => {
