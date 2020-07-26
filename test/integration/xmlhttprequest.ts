@@ -84,22 +84,22 @@ describe('XMLHttpRequest', () => {
 
   describe("addEventListener(event: 'readystatechange')", () => {
     it('returns all states', (done) => {
-      const states: number[] = [];
       const client = new XMLHttpRequest();
-
-      states.push(client.readyState);
+      const states = new Set<number>([client.readyState]);
 
       client.addEventListener('readystatechange', () => {
-        states.push(client.readyState);
+        states.add(client.readyState);
 
         if (client.readyState === XMLHttpRequest.DONE) {
-          expect(states).toEqual([
-            XMLHttpRequest.UNSENT,
-            XMLHttpRequest.OPENED,
-            XMLHttpRequest.HEADERS_RECEIVED,
-            XMLHttpRequest.LOADING,
-            XMLHttpRequest.DONE
-          ]);
+          expect(states).toEqual(
+            new Set([
+              XMLHttpRequest.UNSENT,
+              XMLHttpRequest.OPENED,
+              XMLHttpRequest.HEADERS_RECEIVED,
+              XMLHttpRequest.LOADING,
+              XMLHttpRequest.DONE
+            ])
+          );
 
           done();
         }
