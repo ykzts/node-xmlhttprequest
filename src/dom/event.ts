@@ -117,9 +117,13 @@ export default class Event {
   constructor(type: string, eventInit: EventInit = {}) {
     if (!type) throw new TypeError('Not enough arguments.');
 
-    this[internalEventSymbol] = new InternalEvent(type, {
-      bubbles: eventInit.bubbles ?? false,
-      cancelable: eventInit.cancelable ?? false
+    Object.defineProperty(this, internalEventSymbol, {
+      enumerable: false,
+      value: new InternalEvent(type, {
+        bubbles: eventInit.bubbles ?? false,
+        cancelable: eventInit.cancelable ?? false
+      }),
+      writable: true
     });
   }
 
