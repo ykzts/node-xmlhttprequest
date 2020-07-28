@@ -83,6 +83,12 @@
       "<rootDir>/test/integration/**/*.ts"
     ]
   },
+  "keywords": [
+    "xmlhttprequest",
+    "xhr",
+    "w3c",
+    "whatwg"
+  ],
   "license": "MIT",
   "main": "./dist/index.js",
   "module": "./dist/index.module.js",
