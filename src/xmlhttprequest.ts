@@ -24,6 +24,7 @@ import * as http from 'http';
 import * as https from 'https';
 import Event from './dom/event';
 import FormData from './formdata';
+import EventHandler from './html/eventhandler';
 import ProgressEvent from './progressevent';
 import DOMException from './webidl/domexception';
 import XMLHttpRequestEventTarget from './xmlhttprequesteventtarget';
@@ -112,6 +113,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
   readonly upload: XMLHttpRequestUpload;
 
   #client: http.ClientRequest | null;
+  #onreadystatechange: EventHandler | null;
   #responseBuffer: Buffer;
   #responseHeaders: http.IncomingHttpHeaders | null;
 
@@ -122,6 +124,23 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
   #statusText: string;
   #timeout: number;
   #withCredentials: boolean;
+
+  get onreadystatechange(): EventHandler | null {
+    return this.#onreadystatechange;
+  }
+
+  set onreadystatechange(value: EventHandler | null) {
+    if (this.#onreadystatechange) {
+      this.removeEventListener('readystatechange', this.#onreadystatechange);
+    }
+
+    if (typeof value === 'function') {
+      this.#onreadystatechange = value;
+      this.addEventListener('readystatechange', this.#onreadystatechange);
+    } else {
+      this.#onreadystatechange = null;
+    }
+  }
 
   get readyState(): number {
     return this.#readyState;
@@ -211,6 +230,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     this.upload = new XMLHttpRequestUpload();
 
     this.#client = null;
+    this.#onreadystatechange = null;
     this.#responseBuffer = Buffer.alloc(0);
     this.#responseHeaders = null;
 

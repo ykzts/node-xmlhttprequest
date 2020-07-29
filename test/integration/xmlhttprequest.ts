@@ -65,7 +65,7 @@ describe('XMLHttpRequest', () => {
     baseURL = null;
   });
 
-  describe('abort()', () => {
+  describe('.abort()', () => {
     it('basic use case', (done) => {
       const client = new XMLHttpRequest();
 
@@ -84,7 +84,7 @@ describe('XMLHttpRequest', () => {
     });
   });
 
-  describe("addEventListener(event: 'error')", () => {
+  describe(".addEventListener(event: 'error')", () => {
     it('basic use case', (done) => {
       const client = new XMLHttpRequest();
 
@@ -97,25 +97,56 @@ describe('XMLHttpRequest', () => {
     });
   });
 
-  describe("addEventListener(event: 'load')", () => {
-    it('basic use case', (done) => {
-      const client = new XMLHttpRequest();
+  describe.each([
+    ['loadstart', 0, '', ''],
+    ['progress', 200, 'OK', 'response text'],
+    ['load', 200, 'OK', 'response text'],
+    ['loadend', 200, 'OK', 'response text']
+  ])(
+    `.addEventListener(event: '%s')`,
+    (eventType, expectedStatus, expectedStatusText, expectedResponseText) => {
+      it('basic use case', (done) => {
+        const client = new XMLHttpRequest();
 
-      client.addEventListener('load', () => {
-        expect(client.status).toBe(200);
-        expect(client.statusText).toBe('OK');
-        expect(client.responseText).toBe('response text');
+        client.addEventListener(eventType, () => {
+          expect(client.status).toBe(expectedStatus);
+          expect(client.statusText).toBe(expectedStatusText);
 
-        done();
+          if (eventType !== 'progress') {
+            expect(client.responseText).toBe(expectedResponseText);
+          }
+
+          done();
+        });
+
+        client.open('GET', `${baseURL}/?body=response%20text`);
+        client.send(null);
       });
 
-      client.open('GET', `${baseURL}/?body=response%20text`);
-      client.send(null);
-    });
-  });
+      it('use object property', (done) => {
+        const client = new XMLHttpRequest();
+        const prop = `on${eventType}` as
+          | 'onload'
+          | 'onloadend'
+          | 'onloadstart'
+          | 'onprogress';
 
-  describe("addEventListener(event: 'readystatechange')", () => {
-    it('returns all states', (done) => {
+        client[prop] = () => {
+          expect(client.status).toBe(expectedStatus);
+          expect(client.statusText).toBe(expectedStatusText);
+          expect(client.responseText).toBe(expectedResponseText);
+
+          done();
+        };
+
+        client.open('GET', `${baseURL}/?body=response%20text`);
+        client.send(null);
+      });
+    }
+  );
+
+  describe(".addEventListener(event: 'readystatechange')", () => {
+    it('basic use case', (done) => {
       const client = new XMLHttpRequest();
       const states = new Set<number>([client.readyState]);
 
@@ -140,9 +171,35 @@ describe('XMLHttpRequest', () => {
       client.open('GET', `${baseURL}/?body=onreadystatechange`);
       client.send(null);
     });
+
+    it('use object property', (done) => {
+      const client = new XMLHttpRequest();
+      const states = new Set<number>([client.readyState]);
+
+      client.onreadystatechange = () => {
+        states.add(client.readyState);
+
+        if (client.readyState === XMLHttpRequest.DONE) {
+          expect(states).toEqual(
+            new Set([
+              XMLHttpRequest.UNSENT,
+              XMLHttpRequest.OPENED,
+              XMLHttpRequest.HEADERS_RECEIVED,
+              XMLHttpRequest.LOADING,
+              XMLHttpRequest.DONE
+            ])
+          );
+
+          done();
+        }
+      };
+
+      client.open('GET', `${baseURL}/?body=onreadystatechange`);
+      client.send(null);
+    });
   });
 
-  describe('getAllResponseHeaders()', () => {
+  describe('.getAllResponseHeaders()', () => {
     it('returns all response headers', (done) => {
       const client = new XMLHttpRequest();
 
@@ -166,7 +223,7 @@ describe('XMLHttpRequest', () => {
     });
   });
 
-  describe('getResponseHeader()', () => {
+  describe('.getResponseHeader()', () => {
     it('returns response header value', (done) => {
       const client = new XMLHttpRequest();
 
@@ -181,7 +238,7 @@ describe('XMLHttpRequest', () => {
     });
   });
 
-  describe('responseText', () => {
+  describe('.responseText', () => {
     it('returns object when given JSON', (done) => {
       const client = new XMLHttpRequest();
 
@@ -203,7 +260,7 @@ describe('XMLHttpRequest', () => {
     });
   });
 
-  describe('#withCredentials', () => {
+  describe('.withCredentials', () => {
     it('throws InvalidStateError when readyState is DONE', (done) => {
       const client = new XMLHttpRequest();
 
