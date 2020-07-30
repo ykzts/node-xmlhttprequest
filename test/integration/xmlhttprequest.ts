@@ -126,6 +126,28 @@ describe('XMLHttpRequest', () => {
         client.send(null);
       });
 
+      it('use object with handleEvent', (done) => {
+        const client = new XMLHttpRequest();
+
+        const obj = {
+          handleEvent() {
+            expect(client.status).toBe(expectedStatus);
+            expect(client.statusText).toBe(expectedStatusText);
+
+            if (eventType !== 'progress') {
+              expect(client.responseText).toBe(expectedResponseText);
+            }
+
+            done();
+          }
+        };
+
+        client.addEventListener(eventType, obj);
+
+        client.open('GET', `${baseURL}/?body=response%20text`);
+        client.send(null);
+      });
+
       it('use object property', (done) => {
         const client = new XMLHttpRequest();
         const prop = `on${eventType}` as
