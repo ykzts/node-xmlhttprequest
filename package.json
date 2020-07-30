@@ -42,11 +42,15 @@
       {
         "extends": [
           "plugin:@typescript-eslint/recommended",
+          "plugin:@typescript-eslint/recommended-requiring-type-checking",
           "prettier/@typescript-eslint"
         ],
         "files": [
           "**/*.ts"
-        ]
+        ],
+        "parserOptions": {
+          "project": "tsconfig.json"
+        }
       },
       {
         "env": {
@@ -54,7 +58,10 @@
         },
         "files": [
           "test/**/*.ts"
-        ]
+        ],
+        "parserOptions": {
+          "project": "test/tsconfig.json"
+        }
       }
     ],
     "parserOptions": {
