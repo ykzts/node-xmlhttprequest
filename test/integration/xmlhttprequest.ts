@@ -241,7 +241,7 @@ describe('XMLHttpRequest', () => {
     });
   });
 
-  describe('.responseText', () => {
+  describe('.response', () => {
     it('returns object when given JSON', (done) => {
       const client = new XMLHttpRequest();
 
@@ -257,6 +257,23 @@ describe('XMLHttpRequest', () => {
       client.open(
         'GET',
         `${baseURL}/?body=%7B%22test%22%3A%22value%22%7D&type=application/json`
+      );
+      client.responseType = 'json';
+      client.send(null);
+    });
+
+    it('returns null when given invalid JSON', (done) => {
+      const client = new XMLHttpRequest();
+
+      client.addEventListener('load', () => {
+        expect(client.response).toBe(null);
+
+        done();
+      });
+
+      client.open(
+        'GET',
+        `${baseURL}/?body=%7B%22test%22%3A%22value%22&type=application/json`
       );
       client.responseType = 'json';
       client.send(null);

@@ -147,7 +147,11 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get response(): any {
+  get response(): ArrayBufferLike | Buffer | string | any | null {
+    if (this.readyState !== XMLHttpRequest.DONE) {
+      return null;
+    }
+
     switch (this.responseType) {
       case 'arraybuffer':
         return new Uint8Array(this.#responseBuffer).buffer;
@@ -156,14 +160,32 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
       case 'document':
         return this.responseXML;
       case 'json':
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return JSON.parse(this.responseText);
+        try {
+          const text = this.#responseBuffer.toString();
+
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          return JSON.parse(text);
+        } catch {
+          return null;
+        }
       default:
         return this.responseText;
     }
   }
 
   get responseText(): string {
+    if (this.responseType !== '' && this.responseType !== 'text') {
+      // TODO: Add human readable message.
+      throw new DOMException('', 'InvalidStateError');
+    }
+
+    if (
+      this.readyState !== XMLHttpRequest.LOADING &&
+      this.readyState !== XMLHttpRequest.DONE
+    ) {
+      return '';
+    }
+
     return this.#responseBuffer.toString();
   }
 
@@ -190,6 +212,15 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
   }
 
   get responseXML(): null {
+    if (this.responseType !== '' && this.responseType !== 'document') {
+      // TODO: Add human readable message.
+      throw new DOMException('', 'InvalidStateError');
+    }
+
+    if (this.readyState !== XMLHttpRequest.DONE) {
+      return null;
+    }
+
     return null;
   }
 
