@@ -22,6 +22,6 @@
 
 import Event from '../dom/event';
 
-type EventHandler = (event: Event) => void;
-
-export default EventHandler;
+export default interface EventHandler {
+  (event: Event): void;
+}
