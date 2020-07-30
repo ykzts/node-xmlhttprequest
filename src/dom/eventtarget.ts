@@ -35,12 +35,18 @@ interface EventListener {
   (event: Event): void;
 }
 
+interface EventListenerObject {
+  handleEvent(event: Event): void;
+}
+
+type EventListenerOrEventListenerObject = EventListener | EventListenerObject;
+
 /**
  * @see {@link https://dom.spec.whatwg.org/#interface-eventtarget DOM Standard - 2.7. Interface EventTarget}
  */
 export default class EventTarget {
   #listeners: {
-    [type: string]: Set<EventListener>;
+    [type: string]: Set<EventListenerOrEventListenerObject>;
   };
 
   constructor() {
@@ -52,11 +58,12 @@ export default class EventTarget {
    */
   addEventListener(
     type: string,
-    listener: EventListener,
+    listener: EventListenerOrEventListenerObject,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     options: boolean | AddEventListenerOptions = false
   ): void {
-    this.#listeners[type] = this.#listeners[type] ?? new Set<EventListener>();
+    this.#listeners[type] =
+      this.#listeners[type] ?? new Set<EventListenerOrEventListenerObject>();
 
     if (!this.#listeners[type].has(listener)) {
       this.#listeners[type].add(listener);
@@ -80,7 +87,13 @@ export default class EventTarget {
 
     if (listeners && !event[internalEventSymbol].propagationStoped) {
       for (const listener of listeners) {
-        listener.call(this, event);
+        if (typeof listener === 'undefined') continue;
+
+        if (typeof listener === 'function') {
+          listener.call(this, event);
+        } else if (typeof listener.handleEvent === 'function') {
+          listener.handleEvent.call(listener, event);
+        }
       }
     }
 
@@ -98,7 +111,7 @@ export default class EventTarget {
    */
   removeEventListener(
     type: string,
-    listener: EventListener,
+    listener: EventListenerOrEventListenerObject,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     options: boolean | EventListenerOptions = false
   ): void {
