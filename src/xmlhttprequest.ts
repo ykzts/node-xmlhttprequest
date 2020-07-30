@@ -156,6 +156,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
       case 'document':
         return this.responseXML;
       case 'json':
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return JSON.parse(this.responseText);
       default:
         return this.responseText;
@@ -284,7 +285,13 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     for (const name of headerNames) {
       const value = this.#responseHeaders[name];
 
-      result += `${name}: ${value}\r\n`;
+      if (value) {
+        const values = Array.isArray(value) ? value : [value];
+
+        for (const v of values) {
+          result += `${name}: ${v}\r\n`;
+        }
+      }
     }
 
     return result;
@@ -517,7 +524,9 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     try {
       this.#client.setHeader(headerName, headerValue);
     } catch (error) {
-      throw new DOMException(error.message, 'SyntaxError');
+      const message = error instanceof Error ? error.message : '';
+
+      throw new DOMException(message, 'SyntaxError');
     }
   }
 }

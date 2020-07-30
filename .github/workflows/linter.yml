@@ -25,6 +25,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - run: yarn install --frozen-lockfile
+      - run: yarn build
       - uses: docker://github/super-linter:v3
         env:
           DEFAULT_BRANCH: main

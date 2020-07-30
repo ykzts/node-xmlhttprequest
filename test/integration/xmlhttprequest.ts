@@ -24,6 +24,7 @@ import * as http from 'http';
 import getPort from 'get-port';
 import { XMLHttpRequest } from '../..';
 
+const defaultBaseURL = 'https://example.test';
 const referenceTime = new Date(Date.UTC(1999, 2, 3, 9, 1, 7, 8));
 
 const launchMockServer = (port: number, hostname = 'localhost') =>
@@ -49,7 +50,7 @@ const launchMockServer = (port: number, hostname = 'localhost') =>
 
 describe('XMLHttpRequest', () => {
   let server: http.Server | null = null;
-  let baseURL: string | null = null;
+  let baseURL = defaultBaseURL;
 
   beforeEach(async () => {
     const port = await getPort();
@@ -59,10 +60,12 @@ describe('XMLHttpRequest', () => {
   });
 
   afterEach((done) => {
-    server?.close(() => done());
+    server?.close(() => {
+      done();
+    });
 
     server = null;
-    baseURL = null;
+    baseURL = defaultBaseURL;
   });
 
   describe('.abort()', () => {
