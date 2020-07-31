@@ -302,6 +302,25 @@ describe('XMLHttpRequest', () => {
     });
   });
 
+  describe('.responseURL', () => {
+    it('', (done) => {
+      const client = new XMLHttpRequest();
+
+      client.addEventListener('loadstart', () => {
+        expect(client.responseURL).toBe('');
+      });
+
+      client.addEventListener('load', () => {
+        expect(client.responseURL).toMatch(/http:\/\/localhost:\d+\/path\/to/);
+
+        done();
+      });
+
+      client.open('GET', `${baseURL}/path/to`);
+      client.send(null);
+    });
+  });
+
   describe('.withCredentials', () => {
     it('throws InvalidStateError when readyState is DONE', (done) => {
       const client = new XMLHttpRequest();
