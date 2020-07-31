@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/ykzts/node-xmlhttprequest/compare/v3.0.0-beta.6...v3.0.0) (2020-07-31)
+
 ## [3.0.0-beta.6](https://github.com/ykzts/node-xmlhttprequest/compare/v3.0.0-beta.5...v3.0.0-beta.6) (2020-07-31)
 
 
@@ -56,4 +58,3 @@ All notable changes to this project will be documented in this file. See [standa
 ### Bug Fixes
 
 * change git protocol ([#74](https://github.com/ykzts/node-xmlhttprequest/issues/74)) ([a7d60f5](https://github.com/ykzts/node-xmlhttprequest/commit/a7d60f54e6dbe7f27bd24526ccc19cb482813163))
-
