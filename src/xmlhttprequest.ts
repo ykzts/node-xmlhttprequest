@@ -373,6 +373,8 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
       throw new DOMException('', 'InvalidAccessError');
     }
 
+    this.#responseURL = '';
+
     let parsedURL: URL;
 
     try {
@@ -426,6 +428,8 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
       this.#status = response.statusCode ?? 0;
       this.#statusText = response.statusMessage ?? '';
       this.#responseHeaders = response.headers;
+
+      this.#responseURL = `${protocol}//${parsedURL.host}${path}`;
 
       response.addListener('data', (chunk: Buffer) => {
         if (this.#responseBuffer.length === 0) {
