@@ -86,6 +86,7 @@
       }
     },
     "preset": "ts-jest",
+    "testEnvironment": "node",
     "testMatch": [
       "<rootDir>/test/integration/**/*.ts"
     ]
