@@ -116,6 +116,9 @@
     "type": "git",
     "url": "https://github.com/ykzts/node-xmlhttprequest.git"
   },
+  "resolutions": {
+    "rollup-plugin-terser": "^7.0.0"
+  },
   "scripts": {
     "build": "microbundle --external http,https,perf_hooks --format cjs,es --strict --target node",
     "format": "prettier --write .",
