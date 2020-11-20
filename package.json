@@ -1,11 +1,6 @@
 {
   "author": "Yamagishi Kazutoshi",
   "browser": "./browser.js",
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
   "dependencies": {},
   "description": "Server-side XMLHttpRequest.",
   "devDependencies": {
@@ -29,68 +24,11 @@
   "engines": {
     "node": ">= 10.13.0"
   },
-  "eslintConfig": {
-    "env": {
-      "es6": true,
-      "node": true
-    },
-    "extends": [
-      "eslint:recommended",
-      "plugin:prettier/recommended"
-    ],
-    "overrides": [
-      {
-        "extends": [
-          "plugin:@typescript-eslint/recommended",
-          "plugin:@typescript-eslint/recommended-requiring-type-checking",
-          "prettier/@typescript-eslint"
-        ],
-        "files": [
-          "**/*.ts"
-        ],
-        "parserOptions": {
-          "project": "tsconfig.json"
-        }
-      },
-      {
-        "env": {
-          "jest": true
-        },
-        "files": [
-          "test/**/*.ts"
-        ],
-        "parserOptions": {
-          "project": "test/tsconfig.json"
-        }
-      }
-    ],
-    "parserOptions": {
-      "ecmaVersion": 2019,
-      "sourceType": "module"
-    }
-  },
   "files": [
     "dist",
     "browser.js"
   ],
   "homepage": "https://github.com/ykzts/node-xmlhttprequest",
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
-  "jest": {
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "<rootDir>/test/tsconfig.json"
-      }
-    },
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "testMatch": [
-      "<rootDir>/test/integration/**/*.ts"
-    ]
-  },
   "keywords": [
     "xmlhttprequest",
     "xhr",
@@ -102,16 +40,6 @@
   "module": "./dist/index.module.js",
   "name": "w3c-xmlhttprequest",
   "optionalDependencies": {},
-  "prettier": {
-    "arrowParens": "always",
-    "bracketSpacing": true,
-    "endOfLine": "lf",
-    "quoteProps": "as-needed",
-    "semi": true,
-    "singleQuote": true,
-    "tabWidth": 2,
-    "trailingComma": "none"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ykzts/node-xmlhttprequest.git"
