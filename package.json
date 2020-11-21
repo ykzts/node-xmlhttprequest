@@ -16,6 +16,7 @@
     "get-port": "^5.1.1",
     "husky": "^4.2.5",
     "jest": "^26.1.0",
+    "lint-staged": "^10.5.1",
     "microbundle": "^0.12.3",
     "prettier": "^2.0.5",
     "standard-version": "^9.0.0",
@@ -50,6 +51,7 @@
   "scripts": {
     "build": "microbundle --external http,https,perf_hooks --format cjs,es --strict --target node",
     "format": "prettier --write .",
+    "format-check": "prettier --check .",
     "lint": "eslint .",
     "release": "standard-version",
     "test": "jest"
