@@ -1,6 +1,6 @@
 {
   "author": "Yamagishi Kazutoshi",
-  "browser": "./browser.js",
+  "browser": "./dist/browser.umd.js",
   "dependencies": {},
   "description": "Server-side XMLHttpRequest.",
   "devDependencies": {
@@ -25,9 +25,9 @@
   "engines": {
     "node": ">= 10.13.0"
   },
+  "exports": "./dist/index.modern.js",
   "files": [
-    "dist",
-    "browser.js"
+    "dist"
   ],
   "homepage": "https://github.com/ykzts/node-xmlhttprequest",
   "keywords": [
@@ -45,11 +45,8 @@
     "type": "git",
     "url": "https://github.com/ykzts/node-xmlhttprequest.git"
   },
-  "resolutions": {
-    "rollup-plugin-terser": "^7.0.0"
-  },
   "scripts": {
-    "build": "microbundle --external http,https,perf_hooks --format cjs,es --strict --target node",
+    "build": "microbundle --strict --target node src/index.ts src/browser.ts",
     "format": "prettier --write .",
     "format-check": "prettier --check .",
     "lint": "eslint .",
@@ -58,5 +55,6 @@
   },
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
+  "unpkg": "./dist/index.umd.js",
   "version": "3.0.0"
 }

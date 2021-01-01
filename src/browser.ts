@@ -20,7 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-/* global window */
-exports.XMLHttpRequest = window.XMLHttpRequest;
-exports.XMLHttpRequestUpload = window.XMLHttpRequestUpload;
-exports.FormData = window.FormData;
+export const XMLHttpRequest = window.XMLHttpRequest;
+export const XMLHttpRequestUpload = window.XMLHttpRequestUpload;
+export const FormData = window.FormData;
