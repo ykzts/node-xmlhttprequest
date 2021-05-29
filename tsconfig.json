@@ -2,6 +2,8 @@
   "compilerOptions": {
     "allowJs": false,
     "baseUrl": ".",
+    "declaration": false,
+    "declarationDir": null,
     "esModuleInterop": true,
     "module": "esnext",
     "noEmit": true,
