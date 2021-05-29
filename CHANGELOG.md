@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.3](https://www.github.com/ykzts/node-xmlhttprequest/compare/v3.0.2...v3.0.3) (2021-05-29)
+
+
+### Bug Fixes
+
+* **release-please:** add step for cache dir ([#347](https://www.github.com/ykzts/node-xmlhttprequest/issues/347)) ([5209857](https://www.github.com/ykzts/node-xmlhttprequest/commit/5209857820d7ae7775d3ca49765307fbf8cd2016))
+
 ### [3.0.2](https://www.github.com/ykzts/node-xmlhttprequest/compare/v3.0.1...v3.0.2) (2021-05-29)
 
 
