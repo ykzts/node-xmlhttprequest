@@ -45,7 +45,7 @@
     "url": "https://github.com/ykzts/node-xmlhttprequest.git"
   },
   "scripts": {
-    "build": "microbundle --strict --target node src/index.ts src/browser.ts",
+    "build": "microbundle --no-generate-types --strict --target node src/index.ts src/browser.ts",
     "format": "prettier --write .",
     "format-check": "prettier --check .",
     "lint": "eslint .",
@@ -53,7 +53,7 @@
     "test": "jest"
   },
   "source": "./src/index.ts",
-  "types": "./dist/index.d.ts",
+  "types": "./types/index.d.ts",
   "unpkg": "./dist/index.umd.js",
   "version": "3.0.0"
 }
