@@ -21,6 +21,10 @@ jobs:
           node-version: 14.x
           registry-url: https://registry.npmjs.org/
         if: ${{ steps.release.outputs.release_created }}
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+        if: ${{ steps.release.outputs.release_created }}
       - uses: actions/cache@v2
         id: yarn-cache
         with:
