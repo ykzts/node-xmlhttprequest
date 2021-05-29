@@ -27,7 +27,8 @@
   },
   "exports": "./dist/index.modern.js",
   "files": [
-    "dist"
+    "dist",
+    "types"
   ],
   "homepage": "https://github.com/ykzts/node-xmlhttprequest",
   "keywords": [
