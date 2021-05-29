@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.1](https://www.github.com/ykzts/node-xmlhttprequest/compare/v3.0.0...v3.0.1) (2021-05-29)
+
+
+### Bug Fixes
+
+* **types:** add types dir to files ([#343](https://www.github.com/ykzts/node-xmlhttprequest/issues/343)) ([643953c](https://www.github.com/ykzts/node-xmlhttprequest/commit/643953c9b4b9829cd59f3e3d9d8acb6b56c68a89))
+* **types:** respect original types ([#340](https://www.github.com/ykzts/node-xmlhttprequest/issues/340)) ([7108584](https://www.github.com/ykzts/node-xmlhttprequest/commit/71085844df0b5c9d8231ebebaebd937155329365))
+
 ## [3.0.0](https://github.com/ykzts/node-xmlhttprequest/compare/v3.0.0-beta.6...v3.0.0) (2020-07-31)
 
 ## [3.0.0-beta.6](https://github.com/ykzts/node-xmlhttprequest/compare/v3.0.0-beta.5...v3.0.0-beta.6) (2020-07-31)
