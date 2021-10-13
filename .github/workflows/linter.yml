@@ -52,9 +52,9 @@ jobs:
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.js
+          JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.json
           LINTER_RULES_PATH: /
-          TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.js
+          TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_EDITORCONFIG: true
           VALIDATE_JAVASCRIPT_ES: true
