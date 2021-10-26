@@ -1000,10 +1000,10 @@
     resolve-global "1.0.0"
     yargs "^16.2.0"
 
-"@commitlint/config-conventional@^12.1.4":
-  version "12.1.4"
-  resolved "https://registry.yarnpkg.com/@commitlint/config-conventional/-/config-conventional-12.1.4.tgz#95bbab622f117a8a3e49f95917b08655040c66a8"
-  integrity sha512-ZIdzmdy4o4WyqywMEpprRCrehjCSQrHkaRTVZV411GyLigFQHlEBSJITAihLAWe88Qy/8SyoIe5uKvAsV5vRqQ==
+"@commitlint/config-conventional@^14.0.0":
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/@commitlint/config-conventional/-/config-conventional-14.0.0.tgz#51980dc3a5b54e62d7d4f75b851147555f68b5eb"
+  integrity sha512-iASdgyM6IdOu9vnwFJRNdcDL19+IUmuXf8JcBWbwysLROvLZNOkZJ8yf9IgLbMShH+uwfyZbpYNzU95WWhTQLQ==
   dependencies:
     conventional-changelog-conventionalcommits "^4.3.1"
 
