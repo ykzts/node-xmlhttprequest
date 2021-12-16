@@ -26,7 +26,10 @@
   "engines": {
     "node": ">= 10.13.0"
   },
-  "exports": "./dist/index.modern.js",
+  "exports": {
+    "import": "./dist/index.modern.js",
+    "require": "./dist/index.js"
+  },
   "files": [
     "dist",
     "types"
