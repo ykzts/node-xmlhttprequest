@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2013-2020 Yamagishi Kazutoshi
+// Copyright (c) 2013-2023 Yamagishi Kazutoshi
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,7 @@
 // THE SOFTWARE.
 
 /**
- * @see {@link https://heycam.github.io/webidl/#idl-DOMException Web IDL - 4.3. DOMException}
+ * @see {@link https://webidl.spec.whatwg.org/#idl-DOMException Web IDL - 4.3. DOMException}
  */
 export default class DOMException extends Error {
   /**

@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2012-2020 Yamagishi Kazutoshi
+// Copyright (c) 2012-2023 Yamagishi Kazutoshi
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,23 +20,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import EventTarget from './dom/eventtarget';
-import EventHandler from './html/eventhandler';
-
 export default class XMLHttpRequestEventTarget extends EventTarget {
-  #onabort: EventHandler | null;
-  #onerror: EventHandler | null;
-  #onload: EventHandler | null;
-  #onloadstart: EventHandler | null;
-  #onloadend: EventHandler | null;
-  #onprogress: EventHandler | null;
-  #ontimeout: EventHandler | null;
+  #onabort: EventListener | null = null;
+  #onerror: EventListener | null = null;
+  #onload: EventListener | null = null;
+  #onloadstart: EventListener | null = null;
+  #onloadend: EventListener | null = null;
+  #onprogress: EventListener | null = null;
+  #ontimeout: EventListener | null = null;
 
-  get onabort(): EventHandler | null {
+  get onabort(): EventListener | null {
     return this.#onabort;
   }
 
-  set onabort(value: EventHandler | null) {
+  set onabort(value: EventListener | null) {
     if (this.#onabort) {
       this.removeEventListener('abort', this.#onabort);
     }
@@ -49,11 +46,11 @@ export default class XMLHttpRequestEventTarget extends EventTarget {
     }
   }
 
-  get onerror(): EventHandler | null {
+  get onerror(): EventListener | null {
     return this.#onerror;
   }
 
-  set onerror(value: EventHandler | null) {
+  set onerror(value: EventListener | null) {
     if (this.#onerror) {
       this.removeEventListener('error', this.#onerror);
     }
@@ -66,11 +63,11 @@ export default class XMLHttpRequestEventTarget extends EventTarget {
     }
   }
 
-  get onload(): EventHandler | null {
+  get onload(): EventListener | null {
     return this.#onload;
   }
 
-  set onload(value: EventHandler | null) {
+  set onload(value: EventListener | null) {
     if (this.#onload) {
       this.removeEventListener('load', this.#onload);
     }
@@ -83,11 +80,11 @@ export default class XMLHttpRequestEventTarget extends EventTarget {
     }
   }
 
-  get onloadstart(): EventHandler | null {
+  get onloadstart(): EventListener | null {
     return this.#onloadstart;
   }
 
-  set onloadstart(value: EventHandler | null) {
+  set onloadstart(value: EventListener | null) {
     if (this.#onloadstart) {
       this.removeEventListener('loadstart', this.#onloadstart);
     }
@@ -100,11 +97,11 @@ export default class XMLHttpRequestEventTarget extends EventTarget {
     }
   }
 
-  get onloadend(): EventHandler | null {
+  get onloadend(): EventListener | null {
     return this.#onloadend;
   }
 
-  set onloadend(value: EventHandler | null) {
+  set onloadend(value: EventListener | null) {
     if (this.#onloadend) {
       this.removeEventListener('loadend', this.#onloadend);
     }
@@ -117,11 +114,11 @@ export default class XMLHttpRequestEventTarget extends EventTarget {
     }
   }
 
-  get onprogress(): EventHandler | null {
+  get onprogress(): EventListener | null {
     return this.#onprogress;
   }
 
-  set onprogress(value: EventHandler | null) {
+  set onprogress(value: EventListener | null) {
     if (this.#onprogress) {
       this.removeEventListener('progress', this.#onprogress);
     }
@@ -134,11 +131,11 @@ export default class XMLHttpRequestEventTarget extends EventTarget {
     }
   }
 
-  get ontimeout(): EventHandler | null {
+  get ontimeout(): EventListener | null {
     return this.#ontimeout;
   }
 
-  set ontimeout(value: EventHandler | null) {
+  set ontimeout(value: EventListener | null) {
     if (this.#ontimeout) {
       this.removeEventListener('timeout', this.#ontimeout);
     }
@@ -149,17 +146,5 @@ export default class XMLHttpRequestEventTarget extends EventTarget {
     } else {
       this.#ontimeout = null;
     }
-  }
-
-  constructor() {
-    super();
-
-    this.#onabort = null;
-    this.#onerror = null;
-    this.#onload = null;
-    this.#onloadstart = null;
-    this.#onloadend = null;
-    this.#onprogress = null;
-    this.#ontimeout = null;
   }
 }

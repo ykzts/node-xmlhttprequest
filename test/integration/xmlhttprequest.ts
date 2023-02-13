@@ -26,6 +26,7 @@ import { XMLHttpRequest } from '../..';
 
 const defaultBaseURL = 'https://example.test';
 const referenceTime = new Date(Date.UTC(1999, 2, 3, 9, 1, 7, 8));
+const defaultKeepAliveTimeout = 5_000;
 
 const launchMockServer = (port: number, hostname = 'localhost') =>
   new Promise<http.Server>((resolve) => {
@@ -43,6 +44,9 @@ const launchMockServer = (port: number, hostname = 'localhost') =>
       res.write(body);
       res.end();
     });
+
+    server.keepAliveTimeout = defaultKeepAliveTimeout;
+
     server.listen(port, hostname, () => {
       resolve(server);
     });
@@ -232,9 +236,10 @@ describe('XMLHttpRequest', () => {
         expect(client.getAllResponseHeaders()).toBe(
           [
             'cache-control: max-age=60',
-            'connection: close',
+            'connection: keep-alive',
             'content-type: text/html',
             'date: Wed, 03 Mar 1999 09:01:07 GMT',
+            `keep-alive: timeout=${defaultKeepAliveTimeout / 1_000}`,
             'transfer-encoding: chunked',
             ''
           ].join('\r\n')
