@@ -115,10 +115,10 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
   #onreadystatechange: EventListener | null = null;
   #responseBuffer: Buffer = Buffer.alloc(0);
   #responseHeaders: http.IncomingHttpHeaders | null = null;
+  #responseURL: URL | null = null;
 
   #readyState: number = XMLHttpRequest.UNSENT;
   #responseType: XMLHttpRequestResponseType = '';
-  #responseURL = '';
   #status = 0;
   #statusText = '';
   #timeout = 0;
@@ -207,7 +207,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
   }
 
   get responseURL(): string {
-    return this.#responseURL;
+    return this.#responseURL ? this.#responseURL.toString() : '';
   }
 
   get responseXML(): null {
@@ -269,13 +269,12 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     }
 
     this.#client.destroy();
+    this.#client = null;
 
-    this.#readyState = XMLHttpRequest.UNSENT;
+    this.#changeReadyState(XMLHttpRequest.UNSENT);
 
     this.dispatchEvent(new ProgressEvent('abort'));
     this.upload.dispatchEvent(new ProgressEvent('abort'));
-
-    this.#client = null;
   }
 
   /**
@@ -353,8 +352,6 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
       throw new DOMException('', 'InvalidAccessError');
     }
 
-    this.#responseURL = '';
-
     let parsedURL: URL;
 
     try {
@@ -386,7 +383,6 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     this.#client = new http.ClientRequest({
       agent: new Agent({
         keepAlive: true,
-        scheduling: 'lifo',
         timeout: 5_000
       }),
       auth,
@@ -397,23 +393,34 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
       protocol
     });
 
+    if (this.#timeout > 0) {
+      this.#client.setTimeout(this.#timeout, () => {
+        this.#client = null;
+
+        this.#changeReadyState(XMLHttpRequest.DONE);
+
+        this.dispatchEvent(new ProgressEvent('timeout'));
+        this.upload.dispatchEvent(new ProgressEvent('timeout'));
+      });
+    }
+
     this.#client.addListener('error', () => {
+      this.#client = null;
+
+      this.#changeReadyState(XMLHttpRequest.DONE);
+
       this.dispatchEvent(new ProgressEvent('error'));
       this.upload.dispatchEvent(new ProgressEvent('error'));
-
-      this.#client = null;
-      this.#readyState = XMLHttpRequest.DONE;
     });
 
     this.#client.addListener('response', (response) => {
-      this.#readyState = XMLHttpRequest.HEADERS_RECEIVED;
-      this.dispatchEvent(new Event('readystatechange'));
+      this.#changeReadyState(XMLHttpRequest.HEADERS_RECEIVED);
 
       this.#status = response.statusCode ?? 0;
       this.#statusText = response.statusMessage ?? '';
       this.#responseHeaders = response.headers;
 
-      this.#responseURL = `${protocol}//${parsedURL.host}${path}`;
+      this.#responseURL = new URL(path, `${protocol}//${parsedURL.host}`);
 
       response.addListener('data', (chunk: Buffer) => {
         if (this.#responseBuffer.length === 0) {
@@ -422,8 +429,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
 
         this.#responseBuffer = Buffer.concat([this.#responseBuffer, chunk]);
 
-        this.#readyState = XMLHttpRequest.LOADING;
-        this.dispatchEvent(new Event('readystatechange'));
+        this.#changeReadyState(XMLHttpRequest.LOADING);
 
         this.dispatchEvent(
           new ProgressEvent('progress', {
@@ -433,31 +439,30 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
       });
 
       response.addListener('end', () => {
-        if (this.#responseBuffer.length === 0) {
-          this.#readyState = XMLHttpRequest.LOADING;
-          this.dispatchEvent(new Event('readystatechange'));
+        const receivedBytes = this.#responseBuffer.length;
+
+        if (receivedBytes === 0) {
+          this.#changeReadyState(XMLHttpRequest.LOADING);
         }
 
         this.#client = null;
 
-        this.#readyState = XMLHttpRequest.DONE;
-        this.dispatchEvent(new Event('readystatechange'));
+        this.#changeReadyState(XMLHttpRequest.DONE);
 
         this.dispatchEvent(
           new ProgressEvent('load', {
-            loaded: this.#responseBuffer.length
+            loaded: receivedBytes
           })
         );
         this.dispatchEvent(
           new ProgressEvent('loadend', {
-            loaded: this.#responseBuffer.length
+            loaded: receivedBytes
           })
         );
       });
     });
 
-    this.#readyState = XMLHttpRequest.OPENED;
-    this.dispatchEvent(new Event('readystatechange'));
+    this.#changeReadyState(XMLHttpRequest.OPENED);
   }
 
   /**
@@ -465,7 +470,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
    */
   overrideMimeType(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    mime: string
+    _mime: string
   ): void {
     // TODO: Unimplemented.
   }
@@ -547,5 +552,10 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
 
       throw new DOMException(message, 'SyntaxError');
     }
+  }
+
+  #changeReadyState(readyState: number): void {
+    this.#readyState = readyState;
+    this.dispatchEvent(new Event('readystatechange'));
   }
 }
