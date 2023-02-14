@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/ykzts/node-xmlhttprequest/compare/v3.0.4...v4.0.0) (2023-02-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* replace to native `EventTarget` ([#518](https://github.com/ykzts/node-xmlhttprequest/issues/518))
+
+### Features
+
+* **xhr:** supports xhr.timeout ([#528](https://github.com/ykzts/node-xmlhttprequest/issues/528)) ([b765605](https://github.com/ykzts/node-xmlhttprequest/commit/b7656054e82dd6625571f4d15d156b37b61357f4))
+
+
+### Code Refactoring
+
+* replace to native `EventTarget` ([#518](https://github.com/ykzts/node-xmlhttprequest/issues/518)) ([b3fe7e7](https://github.com/ykzts/node-xmlhttprequest/commit/b3fe7e7aa6a60e0e7a660dd546c534036b4b67af))
+
 ### [3.0.4](https://www.github.com/ykzts/node-xmlhttprequest/compare/v3.0.3...v3.0.4) (2021-12-16)
 
 
