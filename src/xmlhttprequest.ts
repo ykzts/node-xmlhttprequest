@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2011-2020 Yamagishi Kazutoshi
+// Copyright (c) 2011-2023 Yamagishi Kazutoshi
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the 'Software'), to deal
@@ -22,9 +22,7 @@
 
 import * as http from 'http';
 import * as https from 'https';
-import Event from './dom/event';
 import FormData from './formdata';
-import EventHandler from './html/eventhandler';
 import ProgressEvent from './progressevent';
 import DOMException from './webidl/domexception';
 import XMLHttpRequestEventTarget from './xmlhttprequesteventtarget';
@@ -110,26 +108,26 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
   readonly LOADING = XMLHttpRequest.LOADING;
   readonly DONE = XMLHttpRequest.DONE;
 
-  readonly upload: XMLHttpRequestUpload;
+  readonly upload: XMLHttpRequestUpload = new XMLHttpRequestUpload();
 
-  #client: http.ClientRequest | null;
-  #onreadystatechange: EventHandler | null;
-  #responseBuffer: Buffer;
-  #responseHeaders: http.IncomingHttpHeaders | null;
+  #client: http.ClientRequest | null = null;
+  #onreadystatechange: EventListener | null = null;
+  #responseBuffer: Buffer = Buffer.alloc(0);
+  #responseHeaders: http.IncomingHttpHeaders | null = null;
 
-  #readyState: number;
-  #responseType: XMLHttpRequestResponseType;
-  #responseURL: string;
-  #status: number;
-  #statusText: string;
-  #timeout: number;
-  #withCredentials: boolean;
+  #readyState: number = XMLHttpRequest.UNSENT;
+  #responseType: XMLHttpRequestResponseType = '';
+  #responseURL = '';
+  #status = 0;
+  #statusText = '';
+  #timeout = 0;
+  #withCredentials = false;
 
-  get onreadystatechange(): EventHandler | null {
+  get onreadystatechange(): EventListener | null {
     return this.#onreadystatechange;
   }
 
-  set onreadystatechange(value: EventHandler | null) {
+  set onreadystatechange(value: EventListener | null) {
     if (this.#onreadystatechange) {
       this.removeEventListener('readystatechange', this.#onreadystatechange);
     }
@@ -256,25 +254,6 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     this.#withCredentials = value;
   }
 
-  constructor() {
-    super();
-
-    this.upload = new XMLHttpRequestUpload();
-
-    this.#client = null;
-    this.#onreadystatechange = null;
-    this.#responseBuffer = Buffer.alloc(0);
-    this.#responseHeaders = null;
-
-    this.#readyState = XMLHttpRequest.UNSENT;
-    this.#responseType = '';
-    this.#responseURL = '';
-    this.#status = 0;
-    this.#statusText = '';
-    this.#timeout = 0;
-    this.#withCredentials = false;
-  }
-
   /**
    * @see {@link https://xhr.spec.whatwg.org/#the-abort()-method XMLHttpRequest Standard - 4.5.7. The abort() method}
    */
@@ -394,7 +373,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     const user = username || parsedURL.username;
     const pass = password || parsedURL.password;
 
-    const agent = isHTTPS ? https.globalAgent : http.globalAgent;
+    const Agent = isHTTPS ? https.Agent : http.Agent;
     const auth = user ? (pass ? `${user}:${pass}` : user) : '';
     const path = parsedURL.pathname + parsedURL.search;
     const port = parsedURL.port
@@ -404,7 +383,11 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
       : 80;
 
     this.#client = new http.ClientRequest({
-      agent,
+      agent: new Agent({
+        keepAlive: true,
+        scheduling: 'lifo',
+        timeout: 5_000
+      }),
       auth,
       host: parsedURL.hostname,
       method,
