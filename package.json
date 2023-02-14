@@ -9,7 +9,7 @@
     "@types/jest": "^27.0.1",
     "@types/node": "^16.18.12",
     "@typescript-eslint/eslint-plugin": "~5.51.0",
-    "@typescript-eslint/parser": "~5.51.0",
+    "@typescript-eslint/parser": "~5.52.0",
     "conventional-github-releaser": "^3.1.5",
     "eslint": "^8.34.0",
     "eslint-config-prettier": "~8.6.0",
