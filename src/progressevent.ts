@@ -47,15 +47,14 @@ export default class ProgressEvent extends Event {
     return this.#total;
   }
 
-  constructor(
-    type: string,
-    {
+  constructor(type: string, progressEventInit?: ProgressEventInit) {
+    const {
       lengthComputable = false,
       loaded = 0,
       total = 0,
       ...eventInit
-    }: ProgressEventInit = {}
-  ) {
+    } = progressEventInit ?? {};
+
     super(type, eventInit);
 
     this.#lengthComputable = lengthComputable;
