@@ -21,6 +21,7 @@
  * THE SOFTWARE.
  */
 
+import { Blob } from 'buffer';
 import * as http from 'http';
 import getPort from 'get-port';
 import { XMLHttpRequest } from '../..';
@@ -33,17 +34,42 @@ const launchMockServer = (port: number, hostname = 'localhost') =>
   new Promise<http.Server>((resolve) => {
     const server = http.createServer((req, res) => {
       const url = new URL(req.url || '/', `http://${hostname}:${port}`);
-      const status = parseInt(url.searchParams.get('status') || '200', 10);
-      const type = url.searchParams.get('type') || 'text/plain';
-      const body = url.searchParams.get('body') || '';
+      const status = parseInt(url.searchParams.get('status') ?? '200', 10);
+      const type = url.searchParams.get('type') ?? 'text/plain';
+      const body = url.searchParams.get('body') ?? '';
+      const delay = parseInt(url.searchParams.get('timeout') ?? '0', 0);
 
-      res.writeHead(status, {
-        'Cache-Control': 'max-age=60',
-        'Content-Type': type,
-        Date: referenceTime.toUTCString()
+      let blob = new Blob([], {
+        type: req.headers['content-type']
       });
-      res.write(body);
-      res.end();
+
+      req.addListener('data', (chunk: Buffer) => {
+        blob = new Blob([blob, chunk], {
+          type: blob.type
+        });
+      });
+
+      req.addListener('end', () => {
+        res.writeHead(status, {
+          'Cache-Control': 'max-age=60',
+          'Content-Type': type,
+          Date: referenceTime.toUTCString()
+        });
+
+        if (body) {
+          res.write(body);
+        } else if (blob.size > 0) {
+          res.write(blob);
+        }
+
+        if (delay > 0) {
+          setTimeout(() => {
+            res.end();
+          }, delay);
+        } else {
+          res.end();
+        }
+      });
     });
 
     server.keepAliveTimeout = defaultKeepAliveTimeout;
@@ -309,7 +335,7 @@ describe('XMLHttpRequest', () => {
   });
 
   describe('.responseURL', () => {
-    it('', (done) => {
+    it('basic use case', (done) => {
       const client = new XMLHttpRequest();
 
       client.addEventListener('loadstart', () => {
@@ -324,6 +350,39 @@ describe('XMLHttpRequest', () => {
 
       client.open('GET', `${baseURL}/path/to`);
       client.send(null);
+    });
+  });
+
+  describe('.timeout', () => {
+    it('basic use case', (done) => {
+      const client = new XMLHttpRequest();
+
+      client.addEventListener('timeout', () => {
+        done();
+      });
+
+      client.open('GET', `${baseURL}/?delay=10000`);
+      client.timeout = 1_000;
+      client.send(null);
+    });
+  });
+
+  describe('.send()', () => {
+    it('send URLSearchParams', () => {
+      const client = new XMLHttpRequest();
+      const searchParams = new URLSearchParams();
+
+      searchParams.append('subject', 'test subject');
+      searchParams.append('message', 'value1');
+      searchParams.append('message', 'value2');
+      searchParams.append('message', 'value3');
+
+      client.addEventListener('load', () => {
+        expect(client.responseText).toEqual('test');
+      });
+
+      client.open('POST', `${baseURL}/`);
+      client.send(searchParams);
     });
   });
 
