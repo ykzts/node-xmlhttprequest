@@ -61,5 +61,5 @@
   "source": "./src/index.ts",
   "types": "./types/index.d.ts",
   "unpkg": "./dist/index.umd.js",
-  "version": "3.0.4"
+  "version": "4.0.0"
 }
