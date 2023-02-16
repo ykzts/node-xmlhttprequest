@@ -21,14 +21,103 @@
  * THE SOFTWARE.
  */
 
+import { Blob } from 'buffer';
+import File from './file';
+
+/**
+ * @see {@link https://xhr.spec.whatwg.org/#formdataentryvalue XMLHttpRequest Standard - typedef (File or USVString) FormDataEntryValue}
+ */
+export type FormDataEntryValue = File | string;
+
 /**
  * @see {@link https://xhr.spec.whatwg.org/#interface-formdata XMLHttpRequest Standard - 5. Interface FormData}
  */
 export default class FormData {
+  #entryList = new Map<string, Set<FormDataEntryValue>>();
+
   /**
-   * @todo Implement this function.
+   * @see {@link https://xhr.spec.whatwg.org/#dom-formdata-append XMLHttpRequest Standard - The append(name, value) and append(name, blobValue, filename) method}
    */
-  append(/* name, value, filename */): void {
-    // wip
+  append(name: string, value: string): void;
+  append(name: string, blobValue: Blob, filename?: string): void;
+  append(name: string, value: Blob | string, ...args: string[]): void {
+    let entry: FormDataEntryValue;
+
+    if (value instanceof Blob) {
+      const filename = args[0] ?? (value instanceof File ? value.name : 'blob');
+      entry = new File([value], filename, { type: value.type });
+    } else {
+      entry = value;
+    }
+
+    const entrySet = this.#entryList.get(name);
+
+    if (entrySet) {
+      entrySet.add(entry);
+    } else {
+      this.#entryList.set(name, new Set<FormDataEntryValue>([entry]));
+    }
+  }
+
+  /**
+   * @see {@link https://xhr.spec.whatwg.org/#dom-formdata-delete XMLHttpRequest Standard - The delete(name) method}
+   */
+  delete(name: string): void {
+    this.#entryList.delete(name);
+  }
+
+  /**
+   * @see {@link https://xhr.spec.whatwg.org/#dom-formdata-get XMLHttpRequest Standard - The get(name) method}
+   */
+  get(name: string): FormDataEntryValue | undefined {
+    const entrySet = this.#entryList.get(name);
+
+    if (!entrySet) {
+      return;
+    }
+
+    return [...entrySet][0];
+  }
+
+  /**
+   * @see {@link https://xhr.spec.whatwg.org/#dom-get-getall XMLHttpRequest Standard - The getAll(name) method}
+   */
+  getAll(name: string): FormDataEntryValue[] {
+    const entrySet = this.#entryList.get(name);
+
+    return entrySet ? [...entrySet] : [];
+  }
+
+  /**
+   * @see {@link https://xhr.spec.whatwg.org/#dom-formdata-has XMLHttpRequest Standard - The has(name) method}
+   */
+  has(name: string): boolean {
+    return this.#entryList.has(name);
+  }
+
+  /**
+   * @see {@link https://xhr.spec.whatwg.org/#dom-formdata-set XMLHttpRequest Standard - The set(name, value) and set(name, blobValue, filename) method}
+   */
+  set(name: string, value: string): void;
+  set(name: string, blobValue: Blob, filename: string): void;
+  set(name: string, value: Blob | string, ...args: string[]): void {
+    let entry: FormDataEntryValue;
+
+    if (value instanceof Blob) {
+      const filename = args[0] ?? (value instanceof File ? value.name : 'blob');
+      entry = new File([value], filename, { type: value.type });
+    } else {
+      entry = value;
+    }
+
+    this.#entryList.set(name, new Set<FormDataEntryValue>([entry]));
+  }
+
+  *[Symbol.iterator](): IterableIterator<[string, FormDataEntryValue]> {
+    for (const [name, entrySet] of this.#entryList.entries()) {
+      for (const entry of entrySet.values()) {
+        yield [name, entry];
+      }
+    }
   }
 }

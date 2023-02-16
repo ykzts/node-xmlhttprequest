@@ -21,11 +21,13 @@
  * THE SOFTWARE.
  */
 
+import { Blob } from 'buffer';
 import * as http from 'http';
 import * as https from 'https';
+import DOMException from './domexception';
+import File from './file';
 import FormData from './formdata';
 import ProgressEvent from './progressevent';
-import DOMException from './webidl/domexception';
 import XMLHttpRequestEventTarget from './xmlhttprequesteventtarget';
 import XMLHttpRequestUpload from './xmlhttprequestupload';
 
@@ -77,12 +79,11 @@ const FORBIDDEN_RESPONSE_HEADERS = ['set-cookie', 'set-cookie2'];
  */
 const HTTP_HEADER_FIELD_NAME_REGEXP = /[!#$%&'*+-.^_`|~a-z0-9]+/;
 
-export type BodyInit =
-  | ArrayBuffer
-  | Buffer
+export type XMLHttpRequestBodyInit =
+  | Blob
+  | BufferSource
   | FormData
   | URLSearchParams
-  | Uint8Array
   | string;
 
 export type XMLHttpRequestResponseType =
@@ -478,24 +479,64 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
   /**
    * @see {@link https://xhr.spec.whatwg.org/#the-send()-method XMLHttpRequest Standard - 4.5.6. The send() method}
    */
-  send(body: BodyInit | null = null): void {
+  send(body: XMLHttpRequestBodyInit | null = null): void {
     if (this.readyState !== XMLHttpRequest.OPENED || !this.#client) {
       // TODO: Add human readable message.
       throw new DOMException('', 'InvalidStateError');
     }
 
-    if (body) {
-      const bodyInit =
-        body instanceof ArrayBuffer || body instanceof Uint8Array
-          ? Buffer.from(body)
-          : body;
+    this.dispatchEvent(new ProgressEvent('loadstart'));
 
-      if (typeof bodyInit === 'string' || bodyInit instanceof Buffer) {
-        const length = Buffer.isBuffer(bodyInit)
-          ? bodyInit.length
-          : Buffer.byteLength(bodyInit);
+    if (body && !['GET', 'HEAD'].includes(this.#client.method)) {
+      let chunk = new Blob([]);
 
-        this.#client.setHeader('Content-Length', length);
+      if (
+        body instanceof ArrayBuffer ||
+        ArrayBuffer.isView(body) ||
+        body instanceof Blob
+      ) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        chunk = new Blob([body]);
+      } else if (body instanceof URLSearchParams) {
+        chunk = new Blob([body.toString()], {
+          type: 'application/x-www-form-urlencoded; charset=UTF-8'
+        });
+      } else if (body instanceof FormData) {
+        const boundary = '------xxxxx';
+
+        let chunk = new Blob([], {
+          type: `multipart/form-data; boundary=${boundary}`
+        });
+        for (const [name, value] of body) {
+          if (value instanceof File) {
+            chunk = new Blob(
+              [
+                chunk,
+                `Content-Disposition: form-data; name="${name}"; filename="${value.name}"\r\n`,
+                '\r\n',
+                value,
+                `\r\n`
+              ],
+              { type: chunk.type }
+            );
+          } else {
+            chunk = new Blob(
+              [
+                chunk,
+                `${boundary}\r\n`,
+                `Content-Disposition: form-data; name="${name}"\r\n`,
+                '\r\n',
+                `${value}\r\n`
+              ],
+              { type: chunk.type }
+            );
+          }
+        }
+
+        chunk = new Blob([chunk, `${boundary}\r\n`], { type: chunk.type });
+      } else {
+        chunk = new Blob([body], { type: 'text/plain' });
       }
 
       this.#client.addListener('socket', (socket) => {
@@ -511,10 +552,26 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
         });
       });
 
-      this.#client.write(body);
+      if (chunk.type) {
+        this.setRequestHeader('Content-Type', chunk.type);
+      }
+
+      this.setRequestHeader('Content-Length', chunk.size.toString());
+
+      chunk
+        .arrayBuffer()
+        .then((buffer) => {
+          if (!this.#client) {
+            throw new TypeError('The client is initialized unintentionally.');
+          }
+
+          this.#client.write(new Uint8Array(buffer));
+        })
+        .catch((error) => {
+          throw error;
+        });
     }
 
-    this.dispatchEvent(new ProgressEvent('loadstart'));
     this.#client.end();
   }
 

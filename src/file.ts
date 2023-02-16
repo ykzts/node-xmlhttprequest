@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (c) 2011-2023 Yamagishi Kazutoshi
+ * Copyright (c) 2023 Yamagishi Kazutoshi
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,46 @@
  * THE SOFTWARE.
  */
 
-export { default as XMLHttpRequest } from './xmlhttprequest';
-export { default as XMLHttpRequestUpload } from './xmlhttprequestupload';
-export { default as File } from './file';
-export { default as FormData } from './formdata';
+import { Blob, type BlobOptions } from 'buffer';
+import { type BinaryLike } from 'crypto';
+
+/**
+ * @see {@link https://w3c.github.io/FileAPI/#typedefdef-blobpart File API - typedef (BufferSource or Blob or USVString) BlobPart}
+ */
+export type BlobPart = BinaryLike | Blob;
+
+/**
+ * @see {@link https://w3c.github.io/FileAPI/#dfn-FilePropertyBag File API - interface FilePropertyBag}
+ */
+export interface FilePropertyBag extends BlobOptions {
+  lastModified?: number;
+}
+
+/**
+ * @see {@link https://w3c.github.io/FileAPI/#dfn-file File API - interface File}
+ */
+export default class File extends Blob {
+  #lastModifiled: number;
+  #name: string;
+
+  constructor(
+    fileBits: BlobPart[],
+    fileName: string,
+    options?: FilePropertyBag
+  ) {
+    const { lastModified = Date.now(), ...blobPropertyBag } = options ?? {};
+
+    super(fileBits, blobPropertyBag);
+
+    this.#name = fileName;
+    this.#lastModifiled = lastModified;
+  }
+
+  get lastModified(): number {
+    return this.#lastModifiled;
+  }
+
+  get name(): string {
+    return this.#name;
+  }
+}

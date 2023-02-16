@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (c) 2011-2023 Yamagishi Kazutoshi
+ * Copyright (c) 2023 Yamagishi Kazutoshi
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,50 @@
  * THE SOFTWARE.
  */
 
-export { default as XMLHttpRequest } from './xmlhttprequest';
-export { default as XMLHttpRequestUpload } from './xmlhttprequestupload';
-export { default as File } from './file';
-export { default as FormData } from './formdata';
+import { FormData } from '../..';
+
+describe('FormData', () => {
+  describe('.append()', () => {
+    it('basic use case', () => {
+      const formData = new FormData();
+
+      expect(formData.append('message', 'test message')).toBeUndefined();
+    });
+  });
+
+  describe('.delete()', () => {
+    it('basic use case', () => {
+      const formData = new FormData();
+    });
+  });
+
+  describe('.get()', () => {
+    it('basic use case', () => {
+      const formData = new FormData();
+    });
+  });
+
+  describe('.getAll()', () => {
+    it('basic use case', () => {
+      const formData = new FormData();
+    });
+  });
+
+  describe('.has()', () => {
+    it('basic use case', () => {
+      const formData = new FormData();
+    });
+  });
+
+  describe('.set()', () => {
+    it('basic use case', () => {
+      const formData = new FormData();
+    });
+  });
+
+  describe('.[Symbol.iterator]()', () => {
+    it('basic use case', () => {
+      const formData = new FormData();
+    });
+  });
+});
