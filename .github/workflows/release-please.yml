@@ -14,7 +14,7 @@ jobs:
         with:
           token: ${{ secrets.ACTIONS_BOT_TOKEN }}
           release-type: node
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ steps.release.outputs.release_created }}
       - uses: actions/setup-node@v3
         with:
