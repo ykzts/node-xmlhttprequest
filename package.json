@@ -4,7 +4,7 @@
   "dependencies": {},
   "description": "Server-side XMLHttpRequest.",
   "devDependencies": {
-    "@commitlint/cli": "^17.4.3",
+    "@commitlint/cli": "^18.0.0",
     "@commitlint/config-conventional": "^17.4.3",
     "@types/jest": "^27.0.1",
     "@types/node": "^16.18.12",
