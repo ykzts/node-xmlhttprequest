@@ -23,4 +23,3 @@
 
 export { default as XMLHttpRequest } from './xmlhttprequest';
 export { default as XMLHttpRequestUpload } from './xmlhttprequestupload';
-export { default as FormData } from './formdata';
