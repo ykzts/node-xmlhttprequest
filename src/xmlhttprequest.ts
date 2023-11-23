@@ -21,9 +21,8 @@
  * THE SOFTWARE.
  */
 
-import * as http from 'http';
-import * as https from 'https';
-import FormData from './formdata';
+import { DispatchProgressStream } from './internal/dispatchprogress';
+import { createEmptyReadableStream } from './internal/readablestream';
 import ProgressEvent from './progressevent';
 import DOMException from './webidl/domexception';
 import XMLHttpRequestEventTarget from './xmlhttprequesteventtarget';
@@ -79,7 +78,6 @@ const HTTP_HEADER_FIELD_NAME_REGEXP = /[!#$%&'*+-.^_`|~a-z0-9]+/;
 
 export type BodyInit =
   | ArrayBuffer
-  | Buffer
   | FormData
   | URLSearchParams
   | Uint8Array
@@ -111,16 +109,14 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
 
   readonly upload: XMLHttpRequestUpload = new XMLHttpRequestUpload();
 
-  #client: http.ClientRequest | null = null;
+  #abortController = new AbortController();
   #onreadystatechange: EventListener | null = null;
-  #responseBuffer: Buffer = Buffer.alloc(0);
-  #responseHeaders: http.IncomingHttpHeaders | null = null;
-  #responseURL: URL | null = null;
+  #request: Request | null = null;
+  #response: Response | null = null;
+  #responseBuffer: Uint8Array = new Uint8Array();
 
   #readyState: number = XMLHttpRequest.UNSENT;
   #responseType: XMLHttpRequestResponseType = '';
-  #status = 0;
-  #statusText = '';
   #timeout = 0;
   #withCredentials = false;
 
@@ -145,17 +141,17 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     return this.#readyState;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get response(): ArrayBufferLike | Buffer | string | any | null {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
+  get response(): ArrayBufferLike | string | any | null {
     if (this.readyState !== XMLHttpRequest.DONE) {
       return null;
     }
 
     switch (this.responseType) {
       case 'arraybuffer':
-        return new Uint8Array(this.#responseBuffer).buffer;
+        return this.#responseBuffer.buffer;
       case 'blob':
-        return this.#responseBuffer;
+        return new Blob([this.#responseBuffer]);
       case 'document':
         return this.responseXML;
       case 'json':
@@ -185,7 +181,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
       return '';
     }
 
-    return this.#responseBuffer.toString();
+    return new TextDecoder().decode(this.#responseBuffer);
   }
 
   get responseType(): XMLHttpRequestResponseType {
@@ -207,7 +203,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
   }
 
   get responseURL(): string {
-    return this.#responseURL ? this.#responseURL.toString() : '';
+    return this.#response?.url ?? '';
   }
 
   get responseXML(): null {
@@ -224,11 +220,11 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
   }
 
   get status(): number {
-    return this.#status;
+    return this.#response?.status ?? 0;
   }
 
   get statusText(): string {
-    return this.#statusText;
+    return this.#response?.statusText ?? '';
   }
 
   get timeout(): number {
@@ -263,13 +259,13 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
       this.readyState === XMLHttpRequest.UNSENT ||
       this.readyState === XMLHttpRequest.OPENED ||
       this.readyState === XMLHttpRequest.DONE ||
-      !this.#client
+      !this.#request
     ) {
       return;
     }
 
-    this.#client.destroy();
-    this.#client = null;
+    this.#abortController.abort();
+    this.#request = null;
 
     this.#changeReadyState(XMLHttpRequest.UNSENT);
 
@@ -284,19 +280,19 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     if (
       this.readyState === XMLHttpRequest.UNSENT ||
       this.readyState === XMLHttpRequest.OPENED ||
-      !this.#responseHeaders
+      !this.#response
     ) {
       return '';
     }
 
-    const headerNames = Object.keys(this.#responseHeaders).sort();
+    const headerNames = Object.keys(this.#response.headers).sort();
 
     let result = '';
     for (const name of headerNames) {
-      const value = this.#responseHeaders[name];
+      const value = this.#response.headers.get(name);
 
       if (value) {
-        const values = Array.isArray(value) ? value : [value];
+        const values = value.split(/\s*,\s*/);
 
         for (const v of values) {
           result += `${name}: ${v}\r\n`;
@@ -314,7 +310,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     if (
       this.readyState === XMLHttpRequest.UNSENT ||
       this.readyState === XMLHttpRequest.OPENED ||
-      !this.#responseHeaders
+      !this.#response
     ) {
       return null;
     }
@@ -332,9 +328,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
       return null;
     }
 
-    const value = this.#responseHeaders[headerName] || null;
-
-    return Array.isArray(value) ? value.join(', ') : value;
+    return this.#response.headers.get(headerName) || null;
   }
 
   /**
@@ -352,115 +346,34 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
       throw new DOMException('', 'InvalidAccessError');
     }
 
-    let parsedURL: URL;
-
-    try {
-      parsedURL = new URL(url, 'http://localhost/');
-    } catch {
-      // TODO: Add human readable message.
-      throw new DOMException('', 'SyntaxError');
-    }
-
     if (FORBIDDEN_METHODS.includes(method.toLowerCase())) {
       // TODO: Add human readable message.
       throw new DOMException('', 'SecurityError');
     }
 
-    const protocol = parsedURL.protocol;
-    const isHTTPS = protocol === 'https:';
-    const user = username || parsedURL.username;
-    const pass = password || parsedURL.password;
+    let parsedURL: URL;
 
-    const Agent = isHTTPS ? https.Agent : http.Agent;
-    const auth = user ? (pass ? `${user}:${pass}` : user) : '';
-    const path = parsedURL.pathname + parsedURL.search;
-    const port = parsedURL.port
-      ? parseInt(parsedURL.port, 10)
-      : isHTTPS
-      ? 443
-      : 80;
-
-    this.#client = new http.ClientRequest({
-      agent: new Agent({
-        keepAlive: true,
-        timeout: 5_000
-      }),
-      auth,
-      host: parsedURL.hostname,
-      method,
-      path,
-      port,
-      protocol
-    });
-
-    if (this.#timeout > 0) {
-      this.#client.setTimeout(this.#timeout, () => {
-        this.#client = null;
-
-        this.#changeReadyState(XMLHttpRequest.DONE);
-
-        this.dispatchEvent(new ProgressEvent('timeout'));
-        this.upload.dispatchEvent(new ProgressEvent('timeout'));
-      });
+    try {
+      parsedURL = new URL(url);
+    } catch {
+      // TODO: Add human readable message.
+      throw new DOMException('', 'SyntaxError');
     }
 
-    this.#client.addListener('error', () => {
-      this.#client = null;
+    parsedURL.username = '';
+    parsedURL.password = '';
 
-      this.#changeReadyState(XMLHttpRequest.DONE);
-
-      this.dispatchEvent(new ProgressEvent('error'));
-      this.upload.dispatchEvent(new ProgressEvent('error'));
+    this.#request = new Request(parsedURL, {
+      method,
+      signal: this.#abortController.signal
     });
 
-    this.#client.addListener('response', (response) => {
-      this.#changeReadyState(XMLHttpRequest.HEADERS_RECEIVED);
-
-      this.#status = response.statusCode ?? 0;
-      this.#statusText = response.statusMessage ?? '';
-      this.#responseHeaders = response.headers;
-
-      this.#responseURL = new URL(path, `${protocol}//${parsedURL.host}`);
-
-      response.addListener('data', (chunk: Buffer) => {
-        if (this.#responseBuffer.length === 0) {
-          this.dispatchEvent(new ProgressEvent('loadstart'));
-        }
-
-        this.#responseBuffer = Buffer.concat([this.#responseBuffer, chunk]);
-
-        this.#changeReadyState(XMLHttpRequest.LOADING);
-
-        this.dispatchEvent(
-          new ProgressEvent('progress', {
-            loaded: this.#responseBuffer.length
-          })
-        );
-      });
-
-      response.addListener('end', () => {
-        const receivedBytes = this.#responseBuffer.length;
-
-        if (receivedBytes === 0) {
-          this.#changeReadyState(XMLHttpRequest.LOADING);
-        }
-
-        this.#client = null;
-
-        this.#changeReadyState(XMLHttpRequest.DONE);
-
-        this.dispatchEvent(
-          new ProgressEvent('load', {
-            loaded: receivedBytes
-          })
-        );
-        this.dispatchEvent(
-          new ProgressEvent('loadend', {
-            loaded: receivedBytes
-          })
-        );
-      });
-    });
+    if (username && password) {
+      this.#request.headers.set(
+        'Authorization',
+        `Basic ${btoa(`${username}:${password}`)}`
+      );
+    }
 
     this.#changeReadyState(XMLHttpRequest.OPENED);
   }
@@ -479,50 +392,95 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
    * @see {@link https://xhr.spec.whatwg.org/#the-send()-method XMLHttpRequest Standard - 4.5.6. The send() method}
    */
   send(body: BodyInit | null = null): void {
-    if (this.readyState !== XMLHttpRequest.OPENED || !this.#client) {
+    if (this.readyState !== XMLHttpRequest.OPENED || !this.#request) {
       // TODO: Add human readable message.
       throw new DOMException('', 'InvalidStateError');
     }
 
+    const requestInit: RequestInit = {};
+
     if (body) {
       const bodyInit =
-        body instanceof ArrayBuffer || body instanceof Uint8Array
-          ? Buffer.from(body)
+        body instanceof Uint8Array || body instanceof ArrayBuffer
+          ? new Blob([body])
           : body;
 
-      if (typeof bodyInit === 'string' || bodyInit instanceof Buffer) {
-        const length = Buffer.isBuffer(bodyInit)
-          ? bodyInit.length
-          : Buffer.byteLength(bodyInit);
-
-        this.#client.setHeader('Content-Length', length);
+      if (bodyInit instanceof Blob) {
+        Object.assign(requestInit, {
+          body: bodyInit.stream().pipeThrough(
+            new DispatchProgressStream({
+              target: this.upload,
+              total: bodyInit.size
+            })
+          ),
+          duplex: 'half'
+        });
+      } else {
+        requestInit.body = bodyInit;
       }
-
-      this.#client.addListener('socket', (socket) => {
-        this.upload.dispatchEvent(new ProgressEvent('loadstart'));
-
-        socket.addListener('data', () => {
-          this.upload.dispatchEvent(new ProgressEvent('progress'));
-        });
-
-        socket.addListener('end', () => {
-          this.upload.dispatchEvent(new ProgressEvent('load'));
-          this.upload.dispatchEvent(new ProgressEvent('loadend'));
-        });
-      });
-
-      this.#client.write(body);
     }
 
     this.dispatchEvent(new ProgressEvent('loadstart'));
-    this.#client.end();
+
+    fetch(this.#request, requestInit)
+      .then((response) => {
+        this.#changeReadyState(XMLHttpRequest.HEADERS_RECEIVED);
+
+        const rawContentLength = response.headers.get('Content-Length');
+        const contentLength = rawContentLength
+          ? parseInt(rawContentLength, 10)
+          : 0;
+        const total = Number.isNaN(contentLength) ? contentLength : 0;
+
+        (response.body || createEmptyReadableStream())
+          .pipeThrough(new DispatchProgressStream({ target: this, total }))
+          .pipeTo(
+            new WritableStream({
+              close: () => {
+                this.#changeReadyState(XMLHttpRequest.DONE);
+              },
+              start: () => {
+                this.#changeReadyState(XMLHttpRequest.LOADING);
+              },
+              write: (chunk) => {
+                const newBuffer = new Uint8Array(
+                  this.#responseBuffer.byteLength + chunk.byteLength
+                );
+                newBuffer.set(this.#responseBuffer);
+                newBuffer.set(chunk, this.#responseBuffer.byteLength);
+
+                this.#responseBuffer = newBuffer;
+              }
+            })
+          )
+          .catch((error) => {
+            console.error(error);
+          });
+      })
+      .catch(() => {
+        this.#changeReadyState(XMLHttpRequest.DONE);
+
+        this.dispatchEvent(new ProgressEvent('error'));
+        this.upload.dispatchEvent(new ProgressEvent('error'));
+      });
+
+    if (this.#timeout > 0) {
+      setTimeout(() => {
+        this.#abortController.abort();
+
+        this.#changeReadyState(XMLHttpRequest.DONE);
+
+        this.dispatchEvent(new ProgressEvent('timeout'));
+        this.upload.dispatchEvent(new ProgressEvent('timeout'));
+      }, this.#timeout);
+    }
   }
 
   /**
    * @see {@link https://xhr.spec.whatwg.org/#the-setrequestheader()-method XMLHttpRequest Standard - 4.5.2. The setRequestHeader() method}
    */
   setRequestHeader(name: string, value: string): void {
-    if (this.readyState !== XMLHttpRequest.OPENED || !this.#client) {
+    if (this.readyState !== XMLHttpRequest.OPENED || !this.#request) {
       // TODO: Add human readable message.
       throw new DOMException('', 'InvalidStateError');
     }
@@ -546,7 +504,7 @@ export default class XMLHttpRequest extends XMLHttpRequestEventTarget {
     }
 
     try {
-      this.#client.setHeader(headerName, headerValue);
+      this.#request.headers.set(headerName, headerValue);
     } catch (error) {
       const message = error instanceof Error ? error.message : '';
 
